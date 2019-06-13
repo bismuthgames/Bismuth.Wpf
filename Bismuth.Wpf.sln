@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.28307.705
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bismuth.Wpf", "Bismuth.Wpf\Bismuth.Wpf.csproj", "{AB030C8A-A0A4-452F-B058-DEC941E25284}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bismuth.Wpf.Demo", "Bismuth.Wpf.Demo\Bismuth.Wpf.Demo.csproj", "{A4836F04-5F6C-4712-8838-DC8BD0492B2D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{AB030C8A-A0A4-452F-B058-DEC941E25284}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AB030C8A-A0A4-452F-B058-DEC941E25284}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AB030C8A-A0A4-452F-B058-DEC941E25284}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4836F04-5F6C-4712-8838-DC8BD0492B2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4836F04-5F6C-4712-8838-DC8BD0492B2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4836F04-5F6C-4712-8838-DC8BD0492B2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4836F04-5F6C-4712-8838-DC8BD0492B2D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
