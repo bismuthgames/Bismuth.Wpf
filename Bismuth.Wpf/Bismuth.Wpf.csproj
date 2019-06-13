@@ -60,6 +60,8 @@
   <ItemGroup>
     <Compile Include="Controls\BorderlessWindow.cs" />
     <Compile Include="Controls\BorderlessWindowCore.cs" />
+    <Compile Include="Helpers\MouseHelper.cs" />
+    <Compile Include="Helpers\WindowHelper.cs" />
     <Compile Include="Native\DwmApi.cs" />
     <Compile Include="Native\Structs\MARGINS.cs" />
     <Compile Include="Native\Structs\MINMAXINFO.cs" />

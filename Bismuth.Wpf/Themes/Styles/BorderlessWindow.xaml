@@ -2,14 +2,104 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:Bismuth.Wpf.Controls">
 
+    <ControlTemplate x:Key="TransparentThumb" TargetType="{x:Type Thumb}">
+        <Rectangle Fill="Transparent" />
+    </ControlTemplate>
+
+    <Style x:Key="TitleBarButtonStyle" TargetType="{x:Type Button}">
+        <Setter Property="Width" Value="34" />
+        <Setter Property="Foreground" Value="#CCC" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border Background="{TemplateBinding Background}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Foreground" Value="#FFF" />
+                            <Setter Property="Background" Value="#444" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="{x:Type local:BorderlessWindow}">
+        <Setter Property="Foreground" Value="#FFF"/>
+        <Setter Property="Background" Value="#161616"/>
+        <Setter Property="BorderBrush" Value="Red" />
+        <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type local:BorderlessWindow}">
-                    <Border Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}">
-                    </Border>
+                    <Grid LayoutTransform="{TemplateBinding LayoutTransform}">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}">
+                            <DockPanel>
+                                <DockPanel Name="PART_TitleBar" DockPanel.Dock="Top" Background="Transparent" Height="26">
+                                    <Image DockPanel.Dock="Left" Source="{TemplateBinding Icon}" Margin="4" RenderOptions.BitmapScalingMode="HighQuality" />
+                                    <Button Name="PART_CloseButton" DockPanel.Dock="Right" Style="{StaticResource TitleBarButtonStyle}" ToolTip="Close">
+                                        <!--<Path Width="10" Height="10" Stretch="Uniform" Data="M10,1.704L8.331,0.026 5.03,3.327 1.703,0 0,1.704 3.326,5.031 0.025,8.332 1.703,10.009 5.004,6.708 8.305,10.009 10.009,8.305 6.708,5.005" Fill="{Binding (TextElement.Foreground), RelativeSource={RelativeSource Self}}" />-->
+                                        <!--<Path Width="10" Height="10" Stretch="Uniform" Data="M1.7,0L5,3.3 8.3,0 10,1.7 6.7,5 10,8.3 8.3,10 5,6.7 1.7,10 0,8.3 3.3,5 0,1.7z" Fill="{Binding (TextElement.Foreground), RelativeSource={RelativeSource Self}}" />-->
+                                        <Path Width="10" Height="10" Data="M1.5,0L5,3.5 8.5,0 10,1.5 6.5,5 10,8.5 8.5,10 5,6.5 1.5,10 0,8.5 3.5,5 0,1.5z" Fill="{Binding (TextElement.Foreground), RelativeSource={RelativeSource Self}}" />
+                                    </Button>
+                                    <Button Name="PART_RestoreButton" DockPanel.Dock="Right" Style="{StaticResource TitleBarButtonStyle}" ToolTip="Maximize">
+                                        <!--<Path Width="9" Height="9" Stretch="Uniform" Data="F1M0,0L0,9 9,9 9,0 0,0 0,3 8,3 8,8 1,8 1,3z" Fill="{Binding (TextElement.Foreground), RelativeSource={RelativeSource Self}}" />-->
+                                        <Path Width="10" Height="10" Data="M0,0L10,0 10,10 0,10z M1,3L1,9 9,9 9,3z" Fill="{Binding (TextElement.Foreground), RelativeSource={RelativeSource Self}}" />
+                                    </Button>
+                                    <Button Name="PART_MinimizeButton" DockPanel.Dock="Right" Style="{StaticResource TitleBarButtonStyle}" ToolTip="Minimize" FontSize="14">
+                                        <!--<Path Width="9" Height="9" Stretch="None" Data="F1M0,6L0,9 9,9 9,6 0,6z" Fill="{Binding (TextElement.Foreground), RelativeSource={RelativeSource Self}}" />-->
+                                        <Path Width="10" Height="10" Data="M0,7L10,7 10,10 0,10z" Fill="{Binding (TextElement.Foreground), RelativeSource={RelativeSource Self}}" />
+                                    </Button>
+                                    <TextBlock Text="{TemplateBinding Title}" VerticalAlignment="Center" FontWeight="SemiBold" />
+                                </DockPanel>
+                                <AdornerDecorator>
+                                    <ContentPresenter/>
+                                </AdornerDecorator>
+                            </DockPanel>
+                        </Border>
+
+                        <Grid Name="ResizeGrid">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="6" />
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="6" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="6" />
+                                <RowDefinition />
+                                <RowDefinition Height="6" />
+                            </Grid.RowDefinitions>
+
+                            <Thumb Grid.Column="0" Grid.Row="0" Template="{StaticResource TransparentThumb}" Name="PART_TopLeftThumb" Cursor="SizeNWSE" />
+                            <Thumb Grid.Column="1" Grid.Row="0" Template="{StaticResource TransparentThumb}" Name="PART_TopThumb" Cursor="SizeNS" />
+                            <Thumb Grid.Column="2" Grid.Row="0" Template="{StaticResource TransparentThumb}" Name="PART_TopRightThumb" Cursor="SizeNESW" />
+                            <Thumb Grid.Column="2" Grid.Row="1" Template="{StaticResource TransparentThumb}" Name="PART_RightThumb" Cursor="SizeWE" />
+                            <Thumb Grid.Column="2" Grid.Row="2" Template="{StaticResource TransparentThumb}" Name="PART_BottomRightThumb" Cursor="SizeNWSE" />
+                            <Thumb Grid.Column="1" Grid.Row="2" Template="{StaticResource TransparentThumb}" Name="PART_BottomThumb" Cursor="SizeNS" />
+                            <Thumb Grid.Column="0" Grid.Row="2" Template="{StaticResource TransparentThumb}" Name="PART_BottomLeftThumb" Cursor="SizeNESW" />
+                            <Thumb Grid.Column="0" Grid.Row="1" Template="{StaticResource TransparentThumb}" Name="PART_LeftThumb" Cursor="SizeWE" />
+
+                        </Grid>
+
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="WindowState" Value="Maximized">
+                            <Setter TargetName="ResizeGrid" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_RestoreButton" Property="Content">
+                                <Setter.Value>
+                                    <!--<Path Width="10" Height="10" Stretch="Uniform" Data="F1M0,10L0,3 3,3 3,0 10,0 10,2 4,2 4,3 7,3 7,6 6,6 6,5 1,5 1,10z M1,10L7,10 7,7 10,7 10,2 9,2 9,6 6,6 6,9 1,9z" Fill="{Binding (TextElement.Foreground), RelativeSource={RelativeSource Self}}" />-->
+                                    <!--<Path Width="10" Height="10" Stretch="Uniform" Data="M8,7L8,10 0,10 0,3 2,3 2,0 10,0 10,7 8,7z M1,9L7,9 7,5 1,5 1,9z M9,2L3,2 3,3 8,3 8,6 9,6 9,2z" Fill="{Binding (TextElement.Foreground), RelativeSource={RelativeSource Self}}" />-->
+                                    <Path Width="10" Height="10" Data="M2,0L10,0 10,7 8,7 8,10 0,10 0,3 2,3z M1,5L1,9 7,9 7,5z M3,2L3,3 8,3 8,6 9,6 9,2z" Fill="{Binding (TextElement.Foreground), RelativeSource={RelativeSource Self}}" />
+                                </Setter.Value>
+                            </Setter>
+                            <Setter TargetName="PART_RestoreButton" Property="ToolTip" Value="Restore Down" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

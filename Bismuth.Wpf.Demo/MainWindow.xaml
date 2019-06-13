@@ -1,12 +1,13 @@
-﻿<Window x:Class="Bismuth.Wpf.Demo.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Bismuth.Wpf.Demo"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        
+﻿<controls:BorderlessWindow x:Class="Bismuth.Wpf.Demo.MainWindow"
+                           xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                           xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                           xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                           xmlns:controls="clr-namespace:Bismuth.Wpf.Controls;assembly=Bismuth.Wpf"
+                           xmlns:local="clr-namespace:Bismuth.Wpf.Demo"
+                           mc:Ignorable="d"
+                           Title="Bismuth WPF Demo" Height="450" Width="800">
+    <Grid Background="CornflowerBlue">
+
     </Grid>
-</Window>
+</controls:BorderlessWindow>
