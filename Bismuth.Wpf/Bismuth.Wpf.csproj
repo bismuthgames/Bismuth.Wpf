@@ -52,8 +52,23 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Themes\Styles\BorderlessWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\BorderlessWindow.cs" />
+    <Compile Include="Controls\BorderlessWindowCore.cs" />
+    <Compile Include="Native\DwmApi.cs" />
+    <Compile Include="Native\Structs\MARGINS.cs" />
+    <Compile Include="Native\Structs\MINMAXINFO.cs" />
+    <Compile Include="Native\Structs\MONITORINFO.cs" />
+    <Compile Include="Native\Structs\POINT.cs" />
+    <Compile Include="Native\Structs\RECT.cs" />
+    <Compile Include="Native\Structs\WINDOWINFO.cs" />
+    <Compile Include="Native\Structs\WINDOWPLACEMENT.cs" />
+    <Compile Include="Native\User32.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
