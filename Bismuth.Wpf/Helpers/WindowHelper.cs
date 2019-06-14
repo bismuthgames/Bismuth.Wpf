@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Windows;
+using System.Windows.Interop;
 using Bismuth.Wpf.Native;
 
 namespace Bismuth.Wpf.Helpers
@@ -40,6 +42,13 @@ namespace Bismuth.Wpf.Helpers
             };
 
             DwmApi.DwmExtendFrameIntoClientArea(handle, ref margins);
+        }
+
+        public static Point GetWindowPosition(Window window)
+        {
+            var hwndSource = (HwndSource)PresentationSource.FromVisual(window);
+            var windowInfo = User32.GetWindowInfo(hwndSource.Handle);
+            return new Point(windowInfo.client.left, windowInfo.client.top);
         }
     }
 }

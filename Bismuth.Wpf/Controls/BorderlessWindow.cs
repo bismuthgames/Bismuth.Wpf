@@ -42,7 +42,10 @@ namespace Bismuth.Wpf.Controls
         {
             var titleBar = GetTemplateChild("PART_TitleBar") as Panel;
             if (titleBar != null)
+            {
                 titleBar.MouseDown += TitleBar_MouseDown;
+                titleBar.MouseMove += TitleBar_MouseMove;
+            }
 
             var closeButton = GetTemplateChild("PART_CloseButton") as Button;
             if (closeButton != null)
@@ -80,8 +83,30 @@ namespace Bismuth.Wpf.Controls
         {
             if (e.ChangedButton == MouseButton.Left)
             {
+                if (e.ClickCount == 2)
+                    Restore();
+                else
+                    DragMove();
+            }
+        }
+
+        private void TitleBar_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (WindowState == WindowState.Maximized && e.LeftButton == MouseButtonState.Pressed)
+            {
+                Point mp = PointToScreen(e.GetPosition(this));
+                Point wp = WindowHelper.GetWindowPosition(this);
+
+                double prevWidth = ActualWidth;
+
+                WindowState = WindowState.Normal;
+
+                double ratio = ActualWidth / prevWidth;
+
+                Top = wp.Y;
+                Left = mp.X + (wp.X - mp.X) * ratio;
+
                 DragMove();
-                //WindowState = WindowState.Normal;
             }
         }
 
