@@ -22,11 +22,48 @@ namespace Bismuth.Wpf.Controls
         private IntPtr WmNcActivate(IntPtr hWnd, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
             handled = true;
-            IntPtr HRGN_NONE = new IntPtr(-1);
-            return User32.DefWindowProc(hWnd, User32.WM_NCACTIVATE, wParam, HRGN_NONE);
+            return User32.DefWindowProc(hWnd, User32.WM_NCACTIVATE, wParam, User32.HRGN_NONE);
         }
 
         private IntPtr WmNcCalcSize(IntPtr hWnd, IntPtr wParam, IntPtr lParam, ref bool handled)
+        {
+            if (User32.GetWindowPlacement(hWnd).showCmd == User32.SW_MAXIMIZE)
+            {
+                RECT rect1 = (RECT)Marshal.PtrToStructure(lParam, typeof(RECT));
+                User32.DefWindowProc(hWnd, User32.WM_NCCALCSIZE, wParam, lParam);
+                RECT rect2 = (RECT)Marshal.PtrToStructure(lParam, typeof(RECT));
+
+                rect2.top = rect1.top + User32.GetWindowInfo(hWnd).cyWindowBorders;
+                Marshal.StructureToPtr(rect2, lParam, true);
+            }
+
+            handled = true;
+            return IntPtr.Zero;
+        }
+
+        /* Test of different size calculations.
+        private IntPtr WmNcCalcSize_TEST1(IntPtr hWnd, IntPtr wParam, IntPtr lParam, ref bool handled)
+        {
+            if (User32.GetWindowPlacement(hWnd).showCmd == User32.SW_MAXIMIZE)
+            {
+                RECT rect1 = (RECT)Marshal.PtrToStructure(lParam, typeof(RECT));
+                User32.DefWindowProc(hWnd, User32.WM_NCCALCSIZE, wParam, lParam);
+                RECT rect2 = (RECT)Marshal.PtrToStructure(lParam, typeof(RECT));
+
+                MONITORINFO monitorInfo = User32.MonitorInfoFromWindow(hWnd);
+                if (monitorInfo.monitorArea.Width == monitorInfo.workArea.Width &&
+                    monitorInfo.monitorArea.Height == monitorInfo.workArea.Height)
+                    rect2.bottom--;
+
+                rect2.top = rect1.top + User32.GetWindowInfo(hWnd).cyWindowBorders;
+                Marshal.StructureToPtr(rect2, lParam, true);
+            }
+
+            handled = true;
+            return IntPtr.Zero;
+        }
+
+        private IntPtr WmNcCalcSize_TEST2(IntPtr hWnd, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
             if (User32.GetWindowPlacement(hWnd).showCmd == User32.SW_MAXIMIZE)
             {
@@ -73,25 +110,6 @@ namespace Bismuth.Wpf.Controls
             handled = true;
             return IntPtr.Zero;
         }
-
-        private IntPtr WmNcCalcSizeOld(IntPtr hWnd, IntPtr wParam, IntPtr lParam, ref bool handled)
-        {
-            if (User32.GetWindowPlacement(hWnd).showCmd == User32.SW_MAXIMIZE)
-            {
-                RECT rect1 = (RECT)Marshal.PtrToStructure(lParam, typeof(RECT));
-                User32.DefWindowProc(hWnd, User32.WM_NCCALCSIZE, wParam, lParam);
-                RECT rect2 = (RECT)Marshal.PtrToStructure(lParam, typeof(RECT));
-                MONITORINFO monitorInfo = User32.MonitorInfoFromWindow(hWnd);
-                if (monitorInfo.monitorArea.Width == monitorInfo.workArea.Width &&
-                    monitorInfo.monitorArea.Height == monitorInfo.workArea.Height)
-                    rect2.bottom--;
-
-                rect2.top = rect1.top + User32.GetWindowInfo(hWnd).cyWindowBorders;
-                Marshal.StructureToPtr(rect2, lParam, true);
-            }
-
-            handled = true;
-            return IntPtr.Zero;
-        }
+        //*/
     }
 }

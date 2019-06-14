@@ -6,6 +6,8 @@ namespace Bismuth.Wpf.Native
 {
     internal static class User32
     {
+        public static readonly IntPtr HRGN_NONE = new IntPtr(-1);
+
         public const int WM_ACTIVATE = 6;
         public const int WM_GETMINMAXINFO = 36;
         public const int WM_NCCALCSIZE = 131;
@@ -20,8 +22,6 @@ namespace Bismuth.Wpf.Native
         public const int MONITOR_DEFAULTTONULL = 0;
         public const int MONITOR_DEFAULTTOPRIMARY = 1;
         public const int MONITOR_DEFAULTTONEAREST = 2;
-
-        public static readonly IntPtr HRGN_NONE = new IntPtr(-1);
 
         [DllImport("user32.dll")]
         public static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
@@ -52,15 +52,15 @@ namespace Bismuth.Wpf.Native
         public static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
 
         [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool GetMonitorInfo(IntPtr hMonitor, ref MONITORINFO monitorInfo);
-
-        [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool GetWindowInfo(IntPtr hWnd, ref WINDOWINFO windowInfo);
-
-        [DllImport("user32.dll")]
         public static extern IntPtr MonitorFromWindow(IntPtr hWnd, int flags);
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool GetMonitorInfo(IntPtr hMonitor, ref MONITORINFO monitorInfo);
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool GetWindowInfo(IntPtr hWnd, ref WINDOWINFO windowInfo);
 
         [DllImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
