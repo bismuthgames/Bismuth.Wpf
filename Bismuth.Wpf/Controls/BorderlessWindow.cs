@@ -43,7 +43,7 @@ namespace Bismuth.Wpf.Controls
             var titleBar = GetTemplateChild("PART_TitleBar") as Panel;
             if (titleBar != null)
             {
-                titleBar.MouseDown += TitleBar_MouseDown;
+                titleBar.MouseLeftButtonDown += TitleBar_MouseLeftButtonDown;
                 titleBar.MouseMove += TitleBar_MouseMove;
             }
 
@@ -79,23 +79,28 @@ namespace Bismuth.Wpf.Controls
             WindowState = WindowState == WindowState.Normal ? WindowState.Maximized : WindowState.Normal;
         }
 
-        private void TitleBar_MouseDown(object sender, MouseButtonEventArgs e)
+        private bool _suppressTitleBarDrag;
+
+        private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (e.ChangedButton == MouseButton.Left)
+            if (e.ClickCount == 2)
             {
-                if (e.ClickCount == 2)
-                    Restore();
-                else
-                    DragMove();
+                _suppressTitleBarDrag = true;
+                Restore();
+            }
+            else
+            {
+                DragMove();
             }
         }
 
         private void TitleBar_MouseMove(object sender, MouseEventArgs e)
         {
-            if (WindowState == WindowState.Maximized && e.LeftButton == MouseButtonState.Pressed)
+            if (!_suppressTitleBarDrag && WindowState == WindowState.Maximized && e.LeftButton == MouseButtonState.Pressed)
             {
                 Point mp = PointToScreen(e.GetPosition(this));
-                Point wp = WindowHelper.GetWindowPosition(this);
+                Point wp = PointToScreen(new Point(0, 0));
+                //Point wp = WindowHelper.GetWindowPosition(this);
 
                 double prevWidth = ActualWidth;
 
@@ -108,6 +113,8 @@ namespace Bismuth.Wpf.Controls
 
                 DragMove();
             }
+
+            _suppressTitleBarDrag = false;
         }
 
         private void SubscribeToThumb(string childName, ResizeDirection direction)
