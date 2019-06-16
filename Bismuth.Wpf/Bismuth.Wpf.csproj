@@ -60,6 +60,7 @@
   <ItemGroup>
     <Compile Include="Controls\BorderlessWindow.cs" />
     <Compile Include="Controls\BorderlessWindowCore.cs" />
+    <Compile Include="Controls\SqueezePanel.cs" />
     <Compile Include="Helpers\MouseHelper.cs" />
     <Compile Include="Helpers\WindowHelper.cs" />
     <Compile Include="Native\DwmApi.cs" />
