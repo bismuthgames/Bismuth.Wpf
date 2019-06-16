@@ -1,13 +1,34 @@
 ﻿<controls:BorderlessWindow x:Class="Bismuth.Wpf.Demo.MainWindow"
                            xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                            xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                            xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                            xmlns:controls="clr-namespace:Bismuth.Wpf.Controls;assembly=Bismuth.Wpf"
-                           xmlns:local="clr-namespace:Bismuth.Wpf.Demo"
                            mc:Ignorable="d"
                            Title="Bismuth WPF Demo" Height="450" Width="800">
-    <Grid Background="CornflowerBlue">
+    <Border Background="CornflowerBlue" Padding="10">
+        <TabControl>
+            <TabItem Header="SqueezePanel">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="6" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <controls:SqueezePanel>
+                        <Button>Button 1</Button>
+                        <Button>Button 2</Button>
+                        <Button>Button 3 with long text</Button>
+                        <Button ToolTip="Button 4 with short text">X</Button>
+                        <Button>Button 5</Button>
+                        <Button>Button 6</Button>
+                    </controls:SqueezePanel>
+                    <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" />
+                </Grid>
+            </TabItem>
+            <TabItem Header="Stuff">
 
-    </Grid>
+            </TabItem>
+        </TabControl>
+    </Border>
 </controls:BorderlessWindow>
