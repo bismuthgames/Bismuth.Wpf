@@ -117,8 +117,8 @@ namespace Bismuth.Wpf.Controls
 
                     if (treeViewItem.IsExpanded)
                         isBetween = MultiSelectRange(treeViewItem.ItemContainerGenerator, isBetween, a, b);
-                    //else
-                    //    treeViewItem.UnselectRecursive();
+                    else
+                        treeViewItem.UnselectRecursive();
                 }
             }
 
