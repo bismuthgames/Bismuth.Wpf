@@ -142,7 +142,34 @@ namespace Bismuth.Wpf.Controls
 
         internal void MultiSelect(MultiSelectTreeViewItem item)
         {
+            var selectedContainer = SelectedContainer;
 
+            if (selectedContainer == item)
+            {
+                var nextItem = GetNextItem(ItemContainerGenerator, item);
+                if (nextItem != null)
+                {
+                    nextItem.Select(true);
+                }
+                else
+                {
+                    item.IsSelected = false;
+                }
+            }
+            else if (selectedContainer == null)
+            {
+                item.IsSelected = !item.IsSelected;
+            }
+            else if (item.IsSelected)
+            {
+                item.IsSelected = false;
+            }
+            else
+            {
+                IsSelectionChangeActive = true;
+                item.IsSelected = true;
+                IsSelectionChangeActive = false;
+            }
         }
 
         internal void MultiSelectRange(MultiSelectTreeViewItem item)
