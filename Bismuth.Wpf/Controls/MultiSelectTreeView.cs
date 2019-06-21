@@ -66,7 +66,7 @@ namespace Bismuth.Wpf.Controls
             return null;
         }
 
-        private MultiSelectTreeViewItem GetNextItem(ItemContainerGenerator generator, MultiSelectTreeViewItem selectedContainer)
+        private MultiSelectTreeViewItem GetNextSelectedItem(ItemContainerGenerator generator, MultiSelectTreeViewItem selectedContainer)
         {
             for (int i = 0; i < generator.Items.Count; i++)
             {
@@ -75,7 +75,7 @@ namespace Bismuth.Wpf.Controls
                 {
                     if (treeViewItem.IsSelected && treeViewItem != selectedContainer) return treeViewItem;
 
-                    treeViewItem = GetNextItem(generator, selectedContainer);
+                    treeViewItem = GetNextSelectedItem(generator, selectedContainer);
                     if (treeViewItem != null) return treeViewItem;
                 }
             }
@@ -125,17 +125,17 @@ namespace Bismuth.Wpf.Controls
             return isBetween;
         }
 
-        internal void Add(MultiSelectTreeViewItem item)
+        internal void AddToSelected(MultiSelectTreeViewItem item)
         {
 
         }
 
-        internal void Remove(MultiSelectTreeViewItem item)
+        internal void RemoveFromSelected(MultiSelectTreeViewItem item)
         {
 
         }
 
-        internal void Clear()
+        internal void UnselectAllExceptPrimary()
         {
             SingleSelect(ItemContainerGenerator, SelectedContainer);
         }
@@ -146,10 +146,12 @@ namespace Bismuth.Wpf.Controls
 
             if (selectedContainer == item)
             {
-                var nextItem = GetNextItem(ItemContainerGenerator, item);
-                if (nextItem != null)
+                var nextSelectedItem = GetNextSelectedItem(ItemContainerGenerator, item);
+                if (nextSelectedItem != null)
                 {
-                    nextItem.Select(true);
+                    // If more than one items is selected, we want to make the
+                    // next selected item primary one when the current is unselected.
+                    nextSelectedItem.Select(true);
                 }
                 else
                 {

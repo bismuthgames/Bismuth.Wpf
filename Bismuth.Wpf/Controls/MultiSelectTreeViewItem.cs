@@ -27,13 +27,13 @@ namespace Bismuth.Wpf.Controls
 
         protected override void OnSelected(RoutedEventArgs e)
         {
-            ParentTreeView.Add(this);
+            ParentTreeView.AddToSelected(this);
             base.OnSelected(e);
         }
 
         protected override void OnUnselected(RoutedEventArgs e)
         {
-            ParentTreeView.Remove(this);
+            ParentTreeView.RemoveFromSelected(this);
             base.OnUnselected(e);
         }
 
@@ -56,59 +56,86 @@ namespace Bismuth.Wpf.Controls
             }
         }
 
+        private static bool IsControlKeyDown => (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control;
+        private static bool IsShiftKeyDown => (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift;
+
+        private bool _suppressMultiSelect;
+
         protected override void OnKeyDown(KeyEventArgs e)
         {
-            if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
-            {
-                e.Handled = true;
-            }
+            if (IsShiftKeyDown) e.Handled = true;
+
+            if (Keyboard.IsKeyDown(Key.Up) ||
+                Keyboard.IsKeyDown(Key.Down) ||
+                Keyboard.IsKeyDown(Key.Left) ||
+                Keyboard.IsKeyDown(Key.Right))
+                ParentTreeView.UnselectAllExceptPrimary();
 
             base.OnKeyDown(e);
         }
 
         protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
         {
-            if (!e.Handled &&
-                IsSelected &&
-                !Keyboard.IsKeyDown(Key.LeftCtrl) &&
-                !Keyboard.IsKeyDown(Key.RightCtrl) &&
-                !Keyboard.IsKeyDown(Key.LeftShift) &&
-                !Keyboard.IsKeyDown(Key.RightShift))
+            if (!e.Handled && IsEnabled && IsSelected)
             {
-                ParentTreeView.Clear();
-                Select(true);
+                if (!IsControlKeyDown && !IsShiftKeyDown)
+                {
+                    // Calling 'Select' to avoid triggering event handlers.
+                    // This call will make this item the primary selected item.
+                    Select(true);
+                    // Reset the tree view to a single selected item.
+                    // This is done to ensure original behavior.
+                    ParentTreeView.UnselectAllExceptPrimary();
 
-                e.Handled = true;
+                    e.Handled = true;
+                }
+                else if (IsControlKeyDown)
+                {
+                    if (!_suppressMultiSelect)
+                        ParentTreeView.MultiSelect(this);
+
+                    e.Handled = true;
+                }
             }
+
+            _suppressMultiSelect = false;
 
             base.OnMouseLeftButtonUp(e);
         }
 
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
         {
-            var parentTreeView = ParentTreeView;
+            if (!e.Handled && IsEnabled)
+            {
+                var parentTreeView = ParentTreeView;
 
-            if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
-            {
-                parentTreeView.MultiSelect(this);
+                if (IsControlKeyDown)
+                {
+                    if (!IsSelected)
+                    {
+                        _suppressMultiSelect = true;
+                        parentTreeView.MultiSelect(this);
+                    }
 
-                e.Handled = true;
-            }
-            else if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
-            {
-                parentTreeView.MultiSelectRange(this);
+                    e.Handled = true;
+                }
+                else if (IsShiftKeyDown)
+                {
+                    parentTreeView.MultiSelectRange(this);
 
-                e.Handled = true;
-            }
-            else if (IsSelected)
-            {
-                // NOTE: By setting e.Handled to 'true',
-                // we can no longer expand/collapse TreeViewItems by double clicking.
-                e.Handled = true;
-            }
-            else
-            {
-                parentTreeView.Clear();
+                    e.Handled = true;
+                }
+                else if (IsSelected)
+                {
+                    // We don't want the original behavior when clicking on an already selected item,
+                    // because we want the unselect to happen at the 'MouseLeftButtonUp' event instead.
+                    // If we don't do this, it is not possible to implement drag-drop behavior.
+                    e.Handled = true;
+                }
+                else
+                {
+                    parentTreeView.UnselectAllExceptPrimary();
+                }
             }
 
             base.OnMouseLeftButtonDown(e);
