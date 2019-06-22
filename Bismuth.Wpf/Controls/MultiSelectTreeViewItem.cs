@@ -80,7 +80,7 @@ namespace Bismuth.Wpf.Controls
             {
                 if (!IsControlKeyDown && !IsShiftKeyDown)
                 {
-                    // Calling 'Select' to avoid triggering event handlers.
+                    // We call the 'Select' method to bypass the event triggers.
                     // This call will make this item the primary selected item.
                     Select(true);
                     // Reset the tree view to a single selected item.
@@ -135,6 +135,12 @@ namespace Bismuth.Wpf.Controls
                 else
                 {
                     parentTreeView.UnselectAllExceptPrimary();
+                }
+
+                if (e.ClickCount % 2 == 0)
+                {
+                    IsExpanded = !IsExpanded;
+                    e.Handled = true;
                 }
             }
 

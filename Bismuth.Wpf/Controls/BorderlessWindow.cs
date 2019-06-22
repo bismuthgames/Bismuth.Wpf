@@ -83,7 +83,7 @@ namespace Bismuth.Wpf.Controls
 
         private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (e.ClickCount == 2)
+            if (e.ClickCount % 2 == 0)
             {
                 _suppressTitleBarDrag = true;
                 Restore();
