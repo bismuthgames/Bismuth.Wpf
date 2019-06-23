@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bismuth.Wpf.Demo", "Bismuth
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bismuth.Wpf", "Bismuth.Wpf\Bismuth.Wpf.csproj", "{AB030C8A-A0A4-452F-B058-DEC941E25284}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bismuth.Mvvm", "Bismuth.Mvvm\Bismuth.Mvvm.csproj", "{84C79385-BFE8-4361-AEF6-8945C52F4810}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{AB030C8A-A0A4-452F-B058-DEC941E25284}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AB030C8A-A0A4-452F-B058-DEC941E25284}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AB030C8A-A0A4-452F-B058-DEC941E25284}.Release|Any CPU.Build.0 = Release|Any CPU
+		{84C79385-BFE8-4361-AEF6-8945C52F4810}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84C79385-BFE8-4361-AEF6-8945C52F4810}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84C79385-BFE8-4361-AEF6-8945C52F4810}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84C79385-BFE8-4361-AEF6-8945C52F4810}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

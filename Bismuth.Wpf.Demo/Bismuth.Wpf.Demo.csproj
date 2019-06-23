@@ -95,6 +95,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Bismuth.Mvvm\Bismuth.Mvvm.csproj">
+      <Project>{84c79385-bfe8-4361-aef6-8945c52f4810}</Project>
+      <Name>Bismuth.Mvvm</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Bismuth.Wpf\Bismuth.Wpf.csproj">
       <Project>{ab030c8a-a0a4-452f-b058-dec941e25284}</Project>
       <Name>Bismuth.Wpf</Name>
