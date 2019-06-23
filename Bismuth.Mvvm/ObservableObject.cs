@@ -4,9 +4,15 @@ using System.Runtime.CompilerServices;
 
 namespace Bismuth.Mvvm
 {
-    public abstract class ObservableObject : INotifyPropertyChanged
+    public abstract class ObservableObject : INotifyPropertyChanging, INotifyPropertyChanged
     {
+        public event PropertyChangingEventHandler PropertyChanging;
         public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void RaisePropertyChanging([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanging?.Invoke(this, new PropertyChangingEventArgs(propertyName));
+        }
 
         protected virtual void RaisePropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -17,6 +23,7 @@ namespace Bismuth.Mvvm
         {
             if (EqualityComparer<T>.Default.Equals(field, value)) return false;
 
+            RaisePropertyChanging(propertyName);
             field = value;
             RaisePropertyChanged(propertyName);
             return true;
