@@ -75,7 +75,7 @@ namespace Bismuth.Wpf.Controls
                 {
                     if (treeViewItem.IsSelected && treeViewItem != selectedContainer) return treeViewItem;
 
-                    treeViewItem = GetNextSelectedItem(generator, selectedContainer);
+                    treeViewItem = GetNextSelectedItem(treeViewItem.ItemContainerGenerator, selectedContainer);
                     if (treeViewItem != null) return treeViewItem;
                 }
             }
