@@ -1,0 +1,55 @@
+﻿<UserControl x:Class="Bismuth.Wpf.Demo.Views.MultiSelectTreeViewDemoView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:Bismuth.Wpf.Controls;assembly=Bismuth.Wpf"
+             xmlns:vm="clr-namespace:Bismuth.Wpf.Demo.ViewModels"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance vm:MultiSelectTreeViewDemoViewModel, IsDesignTimeCreatable=False}"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Left">
+            <Button>Test 1</Button>
+            <Button>Test 2</Button>
+            <Button>Test 3</Button>
+            <Button>Test 4</Button>
+        </StackPanel>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="6" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <controls:MultiSelectTreeView x:Name="TreeView" ItemsSource="{Binding RootNodes}" SelectedItems="{Binding SelectedNodes}">
+                <controls:MultiSelectTreeView.ItemContainerStyle>
+                    <Style TargetType="{x:Type controls:MultiSelectTreeViewItem}" BasedOn="{StaticResource {x:Type TreeViewItem}}">
+                        <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                        <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                        <Setter Property="ContextMenu">
+                            <Setter.Value>
+                                <ContextMenu>
+                                    <MenuItem Header="Add" Command="{Binding AddCommand}" />
+                                    <MenuItem Header="Remove" Command="{Binding RemoveCommand}" />
+                                </ContextMenu>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </controls:MultiSelectTreeView.ItemContainerStyle>
+                <controls:MultiSelectTreeView.Resources>
+                    <HierarchicalDataTemplate DataType="{x:Type vm:NodeViewModel}" ItemsSource="{Binding Children}">
+                        <TextBlock Text="{Binding Name}" />
+                    </HierarchicalDataTemplate>
+                </controls:MultiSelectTreeView.Resources>
+            </controls:MultiSelectTreeView>
+            <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" />
+            <DockPanel Grid.Column="2">
+                <TextBlock DockPanel.Dock="Top" Text="Primary Selected Item" FontWeight="Bold" />
+                <ContentControl DockPanel.Dock="Top" Content="{Binding SelectedItem, ElementName=TreeView}" Height="22" />
+                <TextBlock DockPanel.Dock="Top" Text="Selected Items" FontWeight="Bold" />
+                <ListBox />
+            </DockPanel>
+
+        </Grid>
+    </DockPanel>
+</UserControl>

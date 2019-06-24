@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using Bismuth.Wpf.Demo.ViewModels;
 
 namespace Bismuth.Wpf.Demo
 {
@@ -6,7 +7,7 @@ namespace Bismuth.Wpf.Demo
     {
         protected override void OnStartup(StartupEventArgs e)
         {
-            MainWindow = new MainWindow();
+            MainWindow = new MainWindow { DataContext = new MainViewModel() };
             MainWindow.Show();
         }
     }
