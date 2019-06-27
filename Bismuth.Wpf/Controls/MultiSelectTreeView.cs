@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Specialized;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
@@ -46,6 +47,35 @@ namespace Bismuth.Wpf.Controls
         private static void OnSelectedItemsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var treeView = (MultiSelectTreeView)d;
+
+            treeView.IsSelectionChangeActive = true;
+
+            if (e.OldValue is INotifyCollectionChanged oldObservableList)
+                oldObservableList.CollectionChanged -= treeView.CollectionChanged;
+
+            if (e.OldValue is IList oldList)
+                treeView.SetIsSelected(oldList, false);
+
+            if (e.NewValue is IList newList)
+                treeView.SetIsSelected(newList, true);
+
+            if (e.NewValue is INotifyCollectionChanged newObservableList)
+                newObservableList.CollectionChanged += treeView.CollectionChanged;
+
+            treeView.IsSelectionChangeActive = false;
+        }
+
+        private void SetIsSelected(IList target, bool value)
+        {
+            foreach (var item in target)
+            {
+                if (ContainerFromItemRecursive(ItemContainerGenerator, item) is MultiSelectTreeViewItem treeViewItem)
+                    treeViewItem.IsSelected = value;
+            }
+        }
+
+        private void CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
         }
 
         private DependencyObject ContainerFromItemRecursive(ItemContainerGenerator generator, object item)
@@ -66,15 +96,15 @@ namespace Bismuth.Wpf.Controls
             return null;
         }
 
-        private MultiSelectTreeViewItem GetNextSelectedItem(ItemContainerGenerator generator, MultiSelectTreeViewItem selectedContainer)
+        private MultiSelectTreeViewItem GetNextSelectedItem(ItemContainerGenerator generator, MultiSelectTreeViewItem primarySelectedContainer)
         {
             for (int i = 0; i < generator.Items.Count; i++)
             {
                 if (generator.ContainerFromIndex(i) is MultiSelectTreeViewItem treeViewItem)
                 {
-                    if (treeViewItem.IsSelected && treeViewItem != selectedContainer) return treeViewItem;
+                    if (treeViewItem.IsSelected && treeViewItem != primarySelectedContainer) return treeViewItem;
 
-                    treeViewItem = GetNextSelectedItem(treeViewItem.ItemContainerGenerator, selectedContainer);
+                    treeViewItem = GetNextSelectedItem(treeViewItem.ItemContainerGenerator, primarySelectedContainer);
                     if (treeViewItem != null) return treeViewItem;
                 }
             }
@@ -82,16 +112,16 @@ namespace Bismuth.Wpf.Controls
             return null;
         }
 
-        private void SingleSelect(ItemContainerGenerator generator, MultiSelectTreeViewItem selectedContainer)
+        private void SingleSelect(ItemContainerGenerator generator, MultiSelectTreeViewItem primarySelectedContainer)
         {
             for (int i = 0; i < generator.Items.Count; i++)
             {
                 if (generator.ContainerFromIndex(i) is MultiSelectTreeViewItem treeViewItem)
                 {
-                    if (treeViewItem != selectedContainer)
+                    if (treeViewItem != primarySelectedContainer)
                         treeViewItem.IsSelected = false;
 
-                    SingleSelect(treeViewItem.ItemContainerGenerator, selectedContainer);
+                    SingleSelect(treeViewItem.ItemContainerGenerator, primarySelectedContainer);
                 }
             }
         }
@@ -176,10 +206,10 @@ namespace Bismuth.Wpf.Controls
 
         internal void MultiSelectRange(MultiSelectTreeViewItem item)
         {
-            var selectedContainer = PrimarySelectedContainer;
+            var primarySelectedContainer = PrimarySelectedContainer;
 
             IsSelectionChangeActive = true;
-            MultiSelectRange(ItemContainerGenerator, false, selectedContainer, item);
+            MultiSelectRange(ItemContainerGenerator, false, primarySelectedContainer, item);
             IsSelectionChangeActive = false;
         }
     }
