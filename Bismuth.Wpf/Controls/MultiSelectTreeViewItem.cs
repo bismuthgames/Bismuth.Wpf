@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -10,9 +11,15 @@ namespace Bismuth.Wpf.Controls
         private static readonly MethodInfo _selectMethod =
             typeof(TreeViewItem).GetMethod("Select", BindingFlags.Instance | BindingFlags.NonPublic);
 
-        internal void Select(bool selected)
+        private static readonly object[] _trueParameter = new object[] { true };
+
+        internal void MakePrimary()
         {
-            _selectMethod.Invoke(this, new object[] { selected });
+            if (!IsSelected) throw new InvalidOperationException("Only selected items can be made primary.");
+            // We don't want to trigger selected events when making an item the
+            // primary selected item, since it is already selected.
+            // To avoid this, we call the private 'Select' method on the base class.
+            _selectMethod.Invoke(this, _trueParameter);
         }
 
         protected override DependencyObject GetContainerForItemOverride()
@@ -47,8 +54,7 @@ namespace Bismuth.Wpf.Controls
         {
             for (int i = 0; i < ItemContainerGenerator.Items.Count; i++)
             {
-                var treeViewItem = ItemContainerGenerator.ContainerFromIndex(i) as MultiSelectTreeViewItem;
-                if (treeViewItem != null)
+                if (ItemContainerGenerator.ContainerFromIndex(i) is MultiSelectTreeViewItem treeViewItem)
                 {
                     treeViewItem.IsSelected = false;
                     treeViewItem.UnselectRecursive();
@@ -80,11 +86,9 @@ namespace Bismuth.Wpf.Controls
             {
                 if (!IsControlKeyDown && !IsShiftKeyDown)
                 {
-                    // We call the 'Select' method to bypass the event triggers.
-                    // This call will make this item the primary selected item.
-                    Select(true);
-                    // Reset the tree view to a single selected item.
-                    // This is done to ensure original behavior.
+                    // When "normal" clicking on an already selected item, we want to make it
+                    // the primary selected item, and unselect everything else.
+                    MakePrimary();
                     ParentTreeView.UnselectAllExceptPrimary();
 
                     e.Handled = true;

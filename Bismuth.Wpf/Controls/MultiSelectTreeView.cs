@@ -19,7 +19,7 @@ namespace Bismuth.Wpf.Controls
             set { _isSelectionChangeActiveProperty.SetValue(this, value); }
         }
 
-        private MultiSelectTreeViewItem SelectedContainer
+        private MultiSelectTreeViewItem PrimarySelectedContainer
         {
             get { return _selectedContainerProperty.GetValue(this) as MultiSelectTreeViewItem; }
         }
@@ -70,8 +70,7 @@ namespace Bismuth.Wpf.Controls
         {
             for (int i = 0; i < generator.Items.Count; i++)
             {
-                var treeViewItem = generator.ContainerFromIndex(i) as MultiSelectTreeViewItem;
-                if (treeViewItem != null)
+                if (generator.ContainerFromIndex(i) is MultiSelectTreeViewItem treeViewItem)
                 {
                     if (treeViewItem.IsSelected && treeViewItem != selectedContainer) return treeViewItem;
 
@@ -87,8 +86,7 @@ namespace Bismuth.Wpf.Controls
         {
             for (int i = 0; i < generator.Items.Count; i++)
             {
-                var treeViewItem = generator.ContainerFromIndex(i) as MultiSelectTreeViewItem;
-                if (treeViewItem != null)
+                if (generator.ContainerFromIndex(i) is MultiSelectTreeViewItem treeViewItem)
                 {
                     if (treeViewItem != selectedContainer)
                         treeViewItem.IsSelected = false;
@@ -102,8 +100,7 @@ namespace Bismuth.Wpf.Controls
         {
             for (int i = 0; i < generator.Items.Count; i++)
             {
-                var treeViewItem = generator.ContainerFromIndex(i) as MultiSelectTreeViewItem;
-                if (treeViewItem != null)
+                if (generator.ContainerFromIndex(i) is MultiSelectTreeViewItem treeViewItem)
                 {
                     if (treeViewItem == a || treeViewItem == b)
                     {
@@ -137,28 +134,31 @@ namespace Bismuth.Wpf.Controls
 
         internal void UnselectAllExceptPrimary()
         {
-            SingleSelect(ItemContainerGenerator, SelectedContainer);
+            SingleSelect(ItemContainerGenerator, PrimarySelectedContainer);
         }
 
         internal void MultiSelect(MultiSelectTreeViewItem item)
         {
-            var selectedContainer = SelectedContainer;
+            var primarySelectedContainer = PrimarySelectedContainer;
 
-            if (selectedContainer == item)
+            if (primarySelectedContainer == item)
             {
+                // If this item is the primary selected item, we want to find the next item
+                // (which is first item in the selection list other than the current one)
+                // and make that the primary one.
+                // If no items were found, we just unselect the current one.
+                // NOTE: MakePrimary() will automatically unselect the current primary item.
                 var nextSelectedItem = GetNextSelectedItem(ItemContainerGenerator, item);
                 if (nextSelectedItem != null)
                 {
-                    // If more than one items is selected, we want to make the
-                    // next selected item primary one when the current is unselected.
-                    nextSelectedItem.Select(true);
+                    nextSelectedItem.MakePrimary();
                 }
                 else
                 {
                     item.IsSelected = false;
                 }
             }
-            else if (selectedContainer == null)
+            else if (primarySelectedContainer == null)
             {
                 item.IsSelected = !item.IsSelected;
             }
@@ -176,7 +176,7 @@ namespace Bismuth.Wpf.Controls
 
         internal void MultiSelectRange(MultiSelectTreeViewItem item)
         {
-            var selectedContainer = SelectedContainer;
+            var selectedContainer = PrimarySelectedContainer;
 
             IsSelectionChangeActive = true;
             MultiSelectRange(ItemContainerGenerator, false, selectedContainer, item);
