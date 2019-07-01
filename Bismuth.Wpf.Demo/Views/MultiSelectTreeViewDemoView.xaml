@@ -47,7 +47,7 @@
                 <TextBlock DockPanel.Dock="Top" Text="Primary Selected Item" FontWeight="Bold" />
                 <ContentControl DockPanel.Dock="Top" Content="{Binding SelectedItem, ElementName=TreeView}" Height="22" />
                 <TextBlock DockPanel.Dock="Top" Text="Selected Items" FontWeight="Bold" />
-                <ListBox />
+                <ListBox ItemsSource="{Binding SelectedItems, ElementName=TreeView}" />
             </DockPanel>
 
         </Grid>

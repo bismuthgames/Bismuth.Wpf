@@ -1,8 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Specialized;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
+using Bismuth.Wpf.Helpers;
 
 namespace Bismuth.Wpf.Controls
 {
@@ -42,12 +44,14 @@ namespace Bismuth.Wpf.Controls
         }
 
         public static readonly DependencyProperty SelectedItemsProperty =
-            DependencyProperty.Register(nameof(SelectedItems), typeof(IList), typeof(MultiSelectTreeView), new PropertyMetadata(OnSelectedItemsChanged));
+            DependencyProperty.Register(nameof(SelectedItems), typeof(IList), typeof(MultiSelectTreeView),
+                new PropertyMetadata(DefaultValueFactory.CreateObservableCollection<object>(), OnSelectedItemsChanged));
 
         private static void OnSelectedItemsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var treeView = (MultiSelectTreeView)d;
 
+            treeView._suppressCollectionChanged = true;
             treeView.IsSelectionChangeActive = true;
 
             if (e.OldValue is INotifyCollectionChanged oldObservableList)
@@ -62,8 +66,11 @@ namespace Bismuth.Wpf.Controls
             if (e.NewValue is INotifyCollectionChanged newObservableList)
                 newObservableList.CollectionChanged += treeView.CollectionChanged;
 
+            treeView._suppressCollectionChanged = false;
             treeView.IsSelectionChangeActive = false;
         }
+
+        private bool _suppressCollectionChanged;
 
         private void SetIsSelected(IList target, bool value)
         {
@@ -76,6 +83,31 @@ namespace Bismuth.Wpf.Controls
 
         private void CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
+            if (_suppressCollectionChanged) return;
+            _suppressCollectionChanged = true;
+
+            switch (e.Action)
+            {
+                case NotifyCollectionChangedAction.Add:
+                case NotifyCollectionChangedAction.Remove:
+                case NotifyCollectionChangedAction.Replace:
+                case NotifyCollectionChangedAction.Move:
+
+                    if (e.OldItems != null) SetIsSelected(e.OldItems, false);
+                    if (e.NewItems != null) SetIsSelected(e.NewItems, true);
+
+                    break;
+
+                case NotifyCollectionChangedAction.Reset:
+
+                    UnselectAll();
+                    if (SelectedItems is IList list)
+                        SetIsSelected(list, true);
+
+                    break;
+            }
+
+            _suppressCollectionChanged = false;
         }
 
         private DependencyObject ContainerFromItemRecursive(ItemContainerGenerator generator, object item)
@@ -96,6 +128,19 @@ namespace Bismuth.Wpf.Controls
             return null;
         }
 
+        private void ForEachRecursive(ItemContainerGenerator generator, Action<MultiSelectTreeViewItem> action)
+        {
+            for (int i = 0; i < generator.Items.Count; i++)
+            {
+                if (generator.ContainerFromIndex(i) is MultiSelectTreeViewItem treeViewItem)
+                {
+                    action(treeViewItem);
+
+                    ForEachRecursive(treeViewItem.ItemContainerGenerator, action);
+                }
+            }
+        }
+
         private MultiSelectTreeViewItem GetNextSelectedItem(ItemContainerGenerator generator, MultiSelectTreeViewItem primarySelectedContainer)
         {
             for (int i = 0; i < generator.Items.Count; i++)
@@ -110,20 +155,6 @@ namespace Bismuth.Wpf.Controls
             }
 
             return null;
-        }
-
-        private void SingleSelect(ItemContainerGenerator generator, MultiSelectTreeViewItem primarySelectedContainer)
-        {
-            for (int i = 0; i < generator.Items.Count; i++)
-            {
-                if (generator.ContainerFromIndex(i) is MultiSelectTreeViewItem treeViewItem)
-                {
-                    if (treeViewItem != primarySelectedContainer)
-                        treeViewItem.IsSelected = false;
-
-                    SingleSelect(treeViewItem.ItemContainerGenerator, primarySelectedContainer);
-                }
-            }
         }
 
         private bool MultiSelectRange(ItemContainerGenerator generator, bool isBetween, MultiSelectTreeViewItem a, MultiSelectTreeViewItem b)
@@ -154,17 +185,43 @@ namespace Bismuth.Wpf.Controls
 
         internal void AddToSelected(MultiSelectTreeViewItem item)
         {
+            if (SelectedItems == null || SelectedItems.IsReadOnly) return;
 
+            if (_suppressCollectionChanged) return;
+            _suppressCollectionChanged = true;
+
+            var obj = item.ParentItemsControl.ItemContainerGenerator.ItemFromContainer(item);
+            SelectedItems.Add(obj);
+
+            _suppressCollectionChanged = false;
         }
 
         internal void RemoveFromSelected(MultiSelectTreeViewItem item)
         {
+            if (SelectedItems == null || SelectedItems.IsReadOnly) return;
 
+            if (_suppressCollectionChanged) return;
+            _suppressCollectionChanged = true;
+
+            var obj = item.ParentItemsControl.ItemContainerGenerator.ItemFromContainer(item);
+            SelectedItems.Remove(obj);
+
+            _suppressCollectionChanged = false;
+        }
+
+        internal void UnselectAll()
+        {
+            ForEachRecursive(ItemContainerGenerator, item => item.IsSelected = false);
         }
 
         internal void UnselectAllExceptPrimary()
         {
-            SingleSelect(ItemContainerGenerator, PrimarySelectedContainer);
+            var primarySelectedContainer = PrimarySelectedContainer;
+            ForEachRecursive(ItemContainerGenerator, item =>
+            {
+                if (item != primarySelectedContainer)
+                    item.IsSelected = false;
+            });
         }
 
         internal void MultiSelect(MultiSelectTreeViewItem item)
