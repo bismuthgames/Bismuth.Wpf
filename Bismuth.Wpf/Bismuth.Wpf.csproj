@@ -63,6 +63,7 @@
     <Compile Include="Controls\MultiSelectTreeView.cs" />
     <Compile Include="Controls\MultiSelectTreeViewItem.cs" />
     <Compile Include="Controls\SqueezePanel.cs" />
+    <Compile Include="Helpers\DefaultValueFactory.cs" />
     <Compile Include="Helpers\MouseHelper.cs" />
     <Compile Include="Helpers\WindowHelper.cs" />
     <Compile Include="Native\DwmApi.cs" />
