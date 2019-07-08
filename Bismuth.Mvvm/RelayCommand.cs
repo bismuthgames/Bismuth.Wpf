@@ -39,18 +39,18 @@ namespace Bismuth.Mvvm
         }
     }
 
-    public class RelayCommand<TArg> : ICommand
+    public class RelayCommand<TParameter> : ICommand
     {
-        private readonly Action<TArg> _execute;
-        private readonly Func<TArg, bool> _canExecute;
+        private readonly Action<TParameter> _execute;
+        private readonly Func<TParameter, bool> _canExecute;
 
-        public RelayCommand(Action<TArg> execute)
+        public RelayCommand(Action<TParameter> execute)
         {
             _execute = execute ?? throw new ArgumentNullException(nameof(execute));
             _canExecute = null;
         }
 
-        public RelayCommand(Action<TArg> execute, Func<TArg, bool> canExecute)
+        public RelayCommand(Action<TParameter> execute, Func<TParameter, bool> canExecute)
         {
             _execute = execute ?? throw new ArgumentNullException(nameof(execute));
             _canExecute = canExecute ?? throw new ArgumentNullException(nameof(canExecute));
@@ -59,8 +59,7 @@ namespace Bismuth.Mvvm
         [DebuggerStepThrough]
         public bool CanExecute(object parameter)
         {
-            TArg arg = (TArg)parameter;
-            return _canExecute == null || _canExecute(arg);
+            return _canExecute == null || _canExecute((TParameter)parameter);
         }
 
         public event EventHandler CanExecuteChanged
@@ -71,8 +70,7 @@ namespace Bismuth.Mvvm
 
         public void Execute(object parameter)
         {
-            TArg arg = (TArg)parameter;
-            _execute(arg);
+            _execute((TParameter)parameter);
         }
     }
 }
