@@ -157,32 +157,6 @@ namespace Bismuth.Wpf.Controls
             return null;
         }
 
-        private bool MultiSelectRange(ItemContainerGenerator generator, bool isBetween, MultiSelectTreeViewItem a, MultiSelectTreeViewItem b)
-        {
-            for (int i = 0; i < generator.Items.Count; i++)
-            {
-                if (generator.ContainerFromIndex(i) is MultiSelectTreeViewItem treeViewItem)
-                {
-                    if (treeViewItem == a || treeViewItem == b)
-                    {
-                        treeViewItem.IsSelected = true;
-                        isBetween = !isBetween;
-                    }
-                    else
-                    {
-                        treeViewItem.IsSelected = isBetween;
-                    }
-
-                    if (treeViewItem.IsExpanded)
-                        isBetween = MultiSelectRange(treeViewItem.ItemContainerGenerator, isBetween, a, b);
-                    else
-                        treeViewItem.UnselectRecursive();
-                }
-            }
-
-            return isBetween;
-        }
-
         internal void AddToSelected(MultiSelectTreeViewItem item)
         {
             if (SelectedItems == null || SelectedItems.IsReadOnly) return;
@@ -263,11 +237,45 @@ namespace Bismuth.Wpf.Controls
 
         internal void MultiSelectRange(MultiSelectTreeViewItem item)
         {
-            var primarySelectedContainer = PrimarySelectedContainer;
+            if (PrimarySelectedContainer == null) SelectFirst();
+            if (PrimarySelectedContainer == null) return;
 
             IsSelectionChangeActive = true;
-            MultiSelectRange(ItemContainerGenerator, false, primarySelectedContainer, item);
+            MultiSelectRange(ItemContainerGenerator, false, PrimarySelectedContainer, item);
             IsSelectionChangeActive = false;
+        }
+
+        private bool MultiSelectRange(ItemContainerGenerator generator, bool isBetween, MultiSelectTreeViewItem a, MultiSelectTreeViewItem b)
+        {
+            for (int i = 0; i < generator.Items.Count; i++)
+            {
+                if (generator.ContainerFromIndex(i) is MultiSelectTreeViewItem treeViewItem)
+                {
+                    if (treeViewItem == a || treeViewItem == b)
+                    {
+                        treeViewItem.IsSelected = true;
+                        if (a != b) isBetween = !isBetween;
+                    }
+                    else
+                    {
+                        treeViewItem.IsSelected = isBetween;
+                    }
+
+                    if (treeViewItem.IsExpanded)
+                        isBetween = MultiSelectRange(treeViewItem.ItemContainerGenerator, isBetween, a, b);
+                    else
+                        treeViewItem.UnselectRecursive();
+                }
+            }
+
+            return isBetween;
+        }
+
+        private void SelectFirst()
+        {
+            if (ItemContainerGenerator.Items.Count > 0 &&
+                ItemContainerGenerator.ContainerFromIndex(0) is MultiSelectTreeViewItem treeViewItem)
+                treeViewItem.IsSelected = true;
         }
     }
 }
