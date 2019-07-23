@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
@@ -69,13 +70,28 @@ namespace Bismuth.Wpf.Controls
 
         protected override void OnKeyDown(KeyEventArgs e)
         {
-            if (IsShiftKeyDown) e.Handled = true;
+            if (IsShiftKeyDown)
+            {
+                e.Handled = true;
 
-            if (Keyboard.IsKeyDown(Key.Up) ||
-                Keyboard.IsKeyDown(Key.Down) ||
-                Keyboard.IsKeyDown(Key.Left) ||
-                Keyboard.IsKeyDown(Key.Right))
+                if (Keyboard.IsKeyDown(Key.Up))
+                {
+                    var previous = ParentTreeView.SecondarySelectedContainer.GetPrevious();
+                    if (previous != null) ParentTreeView.MultiSelectRange(previous);
+                }
+                else if (Keyboard.IsKeyDown(Key.Down))
+                {
+                    var next = ParentTreeView.SecondarySelectedContainer.GetNext();
+                    if (next != null) ParentTreeView.MultiSelectRange(next);
+                }
+            }
+            else if (Keyboard.IsKeyDown(Key.Up) ||
+                     Keyboard.IsKeyDown(Key.Down) ||
+                     Keyboard.IsKeyDown(Key.Left) ||
+                     Keyboard.IsKeyDown(Key.Right))
+            {
                 ParentTreeView.UnselectAllExceptPrimary();
+            }
 
             base.OnKeyDown(e);
         }
@@ -170,6 +186,23 @@ namespace Bismuth.Wpf.Controls
 
                 return null;
             }
+        }
+
+        private MultiSelectTreeViewItem GetPrevious()
+        {
+            return ParentTreeView
+                .EnumerateTreeViewItems(i => i.IsExpanded)
+                .TakeWhile(i => i != this)
+                .LastOrDefault();
+        }
+
+        private MultiSelectTreeViewItem GetNext()
+        {
+            return ParentTreeView
+                .EnumerateTreeViewItems(i => i.IsExpanded)
+                .SkipWhile(i => i != this)
+                .Skip(1)
+                .FirstOrDefault();
         }
     }
 }

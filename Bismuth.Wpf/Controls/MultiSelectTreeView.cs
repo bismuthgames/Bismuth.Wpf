@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
@@ -76,8 +78,8 @@ namespace Bismuth.Wpf.Controls
         {
             foreach (var item in target)
             {
-                if (ContainerFromItemRecursive(ItemContainerGenerator, item) is MultiSelectTreeViewItem treeViewItem)
-                    treeViewItem.IsSelected = value;
+                foreach (var i in EnumerateTreeViewItems().Where(i => i.ParentItemsControl.ItemContainerGenerator.ItemFromContainer(i) == item))
+                    i.IsSelected = value;
             }
         }
 
@@ -110,53 +112,6 @@ namespace Bismuth.Wpf.Controls
             _suppressCollectionChanged = false;
         }
 
-        private DependencyObject ContainerFromItemRecursive(ItemContainerGenerator generator, object item)
-        {
-            for (int i = 0; i < generator.Items.Count; i++)
-            {
-                var obj = generator.Items[i];
-                var container = generator.ContainerFromIndex(i);
-                if (obj == item) return container;
-
-                var itemsControl = container as ItemsControl;
-                if (itemsControl == null) continue;
-
-                container = ContainerFromItemRecursive(itemsControl.ItemContainerGenerator, item);
-                if (container != null) return container;
-            }
-
-            return null;
-        }
-
-        private void ForEachRecursive(ItemContainerGenerator generator, Action<MultiSelectTreeViewItem> action)
-        {
-            for (int i = 0; i < generator.Items.Count; i++)
-            {
-                if (generator.ContainerFromIndex(i) is MultiSelectTreeViewItem treeViewItem)
-                {
-                    action(treeViewItem);
-
-                    ForEachRecursive(treeViewItem.ItemContainerGenerator, action);
-                }
-            }
-        }
-
-        private MultiSelectTreeViewItem GetNextSelectedItem(ItemContainerGenerator generator, MultiSelectTreeViewItem primarySelectedContainer)
-        {
-            for (int i = 0; i < generator.Items.Count; i++)
-            {
-                if (generator.ContainerFromIndex(i) is MultiSelectTreeViewItem treeViewItem)
-                {
-                    if (treeViewItem.IsSelected && treeViewItem != primarySelectedContainer) return treeViewItem;
-
-                    treeViewItem = GetNextSelectedItem(treeViewItem.ItemContainerGenerator, primarySelectedContainer);
-                    if (treeViewItem != null) return treeViewItem;
-                }
-            }
-
-            return null;
-        }
-
         internal void AddToSelected(MultiSelectTreeViewItem item)
         {
             if (SelectedItems == null || SelectedItems.IsReadOnly) return;
@@ -185,18 +140,18 @@ namespace Bismuth.Wpf.Controls
 
         internal void UnselectAll()
         {
-            ForEachRecursive(ItemContainerGenerator, item => item.IsSelected = false);
+            foreach (var i in EnumerateTreeViewItems())
+                i.IsSelected = false;
         }
 
         internal void UnselectAllExceptPrimary()
         {
             var primarySelectedContainer = PrimarySelectedContainer;
-            ForEachRecursive(ItemContainerGenerator, item =>
-            {
-                if (item != primarySelectedContainer)
-                    item.IsSelected = false;
-            });
+            foreach (var i in EnumerateTreeViewItems().Where(i => i != primarySelectedContainer))
+                i.IsSelected = false;
         }
+
+        internal MultiSelectTreeViewItem SecondarySelectedContainer { get; private set; }
 
         internal void MultiSelect(MultiSelectTreeViewItem item)
         {
@@ -209,7 +164,7 @@ namespace Bismuth.Wpf.Controls
                 // and make that the primary one.
                 // If no items were found, we just unselect the current one.
                 // NOTE: MakePrimary() will automatically unselect the current primary item.
-                var nextSelectedItem = GetNextSelectedItem(ItemContainerGenerator, item);
+                var nextSelectedItem = EnumerateTreeViewItems().FirstOrDefault(i => i.IsSelected && i != item);
                 if (nextSelectedItem != null)
                 {
                     nextSelectedItem.MakePrimary();
@@ -237,38 +192,34 @@ namespace Bismuth.Wpf.Controls
 
         internal void MultiSelectRange(MultiSelectTreeViewItem item)
         {
+            SecondarySelectedContainer = item;
+
             if (PrimarySelectedContainer == null) SelectFirst();
             if (PrimarySelectedContainer == null) return;
 
             IsSelectionChangeActive = true;
-            MultiSelectRange(ItemContainerGenerator, false, PrimarySelectedContainer, item);
-            IsSelectionChangeActive = false;
-        }
 
-        private bool MultiSelectRange(ItemContainerGenerator generator, bool isBetween, MultiSelectTreeViewItem a, MultiSelectTreeViewItem b)
-        {
-            for (int i = 0; i < generator.Items.Count; i++)
+            bool isBetween = false;
+            var a = PrimarySelectedContainer;
+            var b = SecondarySelectedContainer;
+
+            foreach (var i in EnumerateTreeViewItems(i => i.IsExpanded))
             {
-                if (generator.ContainerFromIndex(i) is MultiSelectTreeViewItem treeViewItem)
+                if (i == a || i == b)
                 {
-                    if (treeViewItem == a || treeViewItem == b)
-                    {
-                        treeViewItem.IsSelected = true;
-                        if (a != b) isBetween = !isBetween;
-                    }
-                    else
-                    {
-                        treeViewItem.IsSelected = isBetween;
-                    }
-
-                    if (treeViewItem.IsExpanded)
-                        isBetween = MultiSelectRange(treeViewItem.ItemContainerGenerator, isBetween, a, b);
-                    else
-                        treeViewItem.UnselectRecursive();
+                    i.IsSelected = true;
+                    if (a != b) isBetween = !isBetween;
                 }
+                else
+                {
+                    i.IsSelected = isBetween;
+                }
+
+                if (!i.IsExpanded)
+                    i.UnselectRecursive();
             }
 
-            return isBetween;
+            IsSelectionChangeActive = false;
         }
 
         private void SelectFirst()
@@ -276,6 +227,36 @@ namespace Bismuth.Wpf.Controls
             if (ItemContainerGenerator.Items.Count > 0 &&
                 ItemContainerGenerator.ContainerFromIndex(0) is MultiSelectTreeViewItem treeViewItem)
                 treeViewItem.IsSelected = true;
+        }
+
+        protected override void OnSelectedItemChanged(RoutedPropertyChangedEventArgs<object> e)
+        {
+            SecondarySelectedContainer = PrimarySelectedContainer;
+        }
+
+        internal IEnumerable<MultiSelectTreeViewItem> EnumerateTreeViewItems()
+        {
+            return EnumerateTreeViewItems(ItemContainerGenerator, _ => true);
+        }
+
+        internal IEnumerable<MultiSelectTreeViewItem> EnumerateTreeViewItems(Func<MultiSelectTreeViewItem, bool> includeChildren)
+        {
+            return EnumerateTreeViewItems(ItemContainerGenerator, includeChildren);
+        }
+
+        private IEnumerable<MultiSelectTreeViewItem> EnumerateTreeViewItems(ItemContainerGenerator generator, Func<MultiSelectTreeViewItem, bool> includeChildren)
+        {
+            for (int i = 0; i < generator.Items.Count; i++)
+            {
+                if (generator.ContainerFromIndex(i) is MultiSelectTreeViewItem treeViewItem)
+                {
+                    yield return treeViewItem;
+
+                    if (includeChildren(treeViewItem))
+                        foreach (var child in EnumerateTreeViewItems(treeViewItem.ItemContainerGenerator, includeChildren))
+                            yield return child;
+                }
+            }
         }
     }
 }
