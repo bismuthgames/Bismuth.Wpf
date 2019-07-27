@@ -35,13 +35,15 @@ namespace Bismuth.Wpf.Controls
 
         protected override void OnSelected(RoutedEventArgs e)
         {
-            ParentTreeView.AddToSelected(this);
+            ParentTreeView.AddToSelected(ItemForContainer);
             base.OnSelected(e);
         }
 
         protected override void OnUnselected(RoutedEventArgs e)
         {
-            ParentTreeView.RemoveFromSelected(this);
+            if (ParentTreeView == null) return;
+
+            ParentTreeView.RemoveFromSelected(ItemForContainer);
             base.OnUnselected(e);
         }
 
@@ -83,6 +85,14 @@ namespace Bismuth.Wpf.Controls
                 {
                     var next = ParentTreeView.SecondarySelectedContainer.GetNext();
                     if (next != null) ParentTreeView.MultiSelectRange(next);
+                }
+                else if (Keyboard.IsKeyDown(Key.PageUp) || Keyboard.IsKeyDown(Key.Home))
+                {
+                    ParentTreeView.MultiSelectRange(ParentTreeView.EnumerateTreeViewItems(i => i.IsExpanded).First());
+                }
+                else if (Keyboard.IsKeyDown(Key.PageDown) || Keyboard.IsKeyDown(Key.End))
+                {
+                    ParentTreeView.MultiSelectRange(ParentTreeView.EnumerateTreeViewItems(i => i.IsExpanded).Last());
                 }
             }
             else if (Keyboard.IsKeyDown(Key.Up) ||
@@ -167,7 +177,9 @@ namespace Bismuth.Wpf.Controls
             base.OnMouseLeftButtonDown(e);
         }
 
-        internal ItemsControl ParentItemsControl
+        internal object ItemForContainer { get { return ParentItemsControl.ItemContainerGenerator.ItemFromContainer(this); } }
+
+        private ItemsControl ParentItemsControl
         {
             get { return ItemsControlFromItemContainer(this); }
         }
