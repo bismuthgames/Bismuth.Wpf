@@ -24,7 +24,7 @@ namespace Bismuth.Wpf.Controls
             set { _isSelectionChangeActiveProperty.SetValue(this, value); }
         }
 
-        private MultiSelectTreeViewItem PrimarySelectedContainer
+        internal MultiSelectTreeViewItem PrimarySelectedContainer
         {
             get { return _selectedContainerProperty.GetValue(this) as MultiSelectTreeViewItem; }
         }
@@ -37,6 +37,17 @@ namespace Bismuth.Wpf.Controls
         protected override bool IsItemItsOwnContainerOverride(object item)
         {
             return item is MultiSelectTreeViewItem;
+        }
+
+        protected override void OnItemsChanged(NotifyCollectionChangedEventArgs e)
+        {
+            RefreshSelectedItems();
+            base.OnItemsChanged(e);
+        }
+
+        protected override void OnSelectedItemChanged(RoutedPropertyChangedEventArgs<object> e)
+        {
+            SecondarySelectedContainer = PrimarySelectedContainer;
         }
 
         public IList SelectedItems
@@ -110,6 +121,26 @@ namespace Bismuth.Wpf.Controls
             _suppressCollectionChanged = false;
         }
 
+        internal void RefreshSelectedItems()
+        {
+            if (SelectedItems == null || SelectedItems.IsReadOnly || SelectedItems.Count == 0) return;
+
+            var oldSelectedItems = SelectedItems
+                .Cast<object>()
+                .ToArray();
+
+            var newSelectedItems = EnumerateTreeViewItems(i => i.IsExpanded)
+                .Where(i => i.IsSelected)
+                .Select(i => i.ItemForContainer)
+                .ToArray();
+
+            foreach (object item in oldSelectedItems.Except(newSelectedItems))
+                RemoveFromSelected(item);
+
+            foreach (object item in newSelectedItems.Except(oldSelectedItems))
+                AddToSelected(item);
+        }
+
         internal void AddToSelected(object item)
         {
             if (SelectedItems == null || SelectedItems.IsReadOnly) return;
@@ -147,7 +178,7 @@ namespace Bismuth.Wpf.Controls
                 i.IsSelected = false;
         }
 
-        internal MultiSelectTreeViewItem SecondarySelectedContainer { get; private set; }
+        internal MultiSelectTreeViewItem SecondarySelectedContainer { get; set; }
 
         internal void MultiSelect(MultiSelectTreeViewItem container)
         {
@@ -224,11 +255,6 @@ namespace Bismuth.Wpf.Controls
             if (ItemContainerGenerator.Items.Count > 0 &&
                 ItemContainerGenerator.ContainerFromIndex(0) is MultiSelectTreeViewItem treeViewItem)
                 treeViewItem.IsSelected = true;
-        }
-
-        protected override void OnSelectedItemChanged(RoutedPropertyChangedEventArgs<object> e)
-        {
-            SecondarySelectedContainer = PrimarySelectedContainer;
         }
 
         internal IEnumerable<MultiSelectTreeViewItem> EnumerateTreeViewItems()

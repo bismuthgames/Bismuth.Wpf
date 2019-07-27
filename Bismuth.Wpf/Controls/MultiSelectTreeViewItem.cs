@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
@@ -33,6 +34,12 @@ namespace Bismuth.Wpf.Controls
             return item is MultiSelectTreeViewItem;
         }
 
+        protected override void OnItemsChanged(NotifyCollectionChangedEventArgs e)
+        {
+            ParentTreeView?.RefreshSelectedItems();
+            base.OnItemsChanged(e);
+        }
+
         protected override void OnSelected(RoutedEventArgs e)
         {
             ParentTreeView.AddToSelected(ItemForContainer);
@@ -41,9 +48,14 @@ namespace Bismuth.Wpf.Controls
 
         protected override void OnUnselected(RoutedEventArgs e)
         {
-            if (ParentTreeView == null) return;
+            var parentTreeView = ParentTreeView;
+            if (parentTreeView == null) return;
 
-            ParentTreeView.RemoveFromSelected(ItemForContainer);
+            parentTreeView.RemoveFromSelected(ItemForContainer);
+
+            if (parentTreeView.SecondarySelectedContainer == this)
+                parentTreeView.SecondarySelectedContainer = parentTreeView.PrimarySelectedContainer;
+
             base.OnUnselected(e);
         }
 
