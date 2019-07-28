@@ -123,7 +123,7 @@ namespace Bismuth.Wpf.Controls
 
         internal void RefreshSelectedItems()
         {
-            if (SelectedItems == null || SelectedItems.IsReadOnly || SelectedItems.Count == 0) return;
+            if (SelectedItems == null || SelectedItems.IsReadOnly || SelectedItems.IsFixedSize || SelectedItems.Count == 0) return;
 
             var oldSelectedItems = SelectedItems
                 .Cast<object>()
@@ -143,7 +143,7 @@ namespace Bismuth.Wpf.Controls
 
         internal void AddToSelected(object item)
         {
-            if (SelectedItems == null || SelectedItems.IsReadOnly) return;
+            if (SelectedItems == null || SelectedItems.IsReadOnly || SelectedItems.IsFixedSize) return;
 
             if (_suppressCollectionChanged) return;
             _suppressCollectionChanged = true;
@@ -155,7 +155,7 @@ namespace Bismuth.Wpf.Controls
 
         internal void RemoveFromSelected(object item)
         {
-            if (SelectedItems == null || SelectedItems.IsReadOnly) return;
+            if (SelectedItems == null || SelectedItems.IsReadOnly || SelectedItems.IsFixedSize) return;
 
             if (_suppressCollectionChanged) return;
             _suppressCollectionChanged = true;
