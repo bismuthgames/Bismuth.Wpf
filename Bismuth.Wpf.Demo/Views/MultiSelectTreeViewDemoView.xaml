@@ -10,10 +10,9 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <DockPanel>
         <StackPanel DockPanel.Dock="Left">
-            <Button>Test 1</Button>
-            <Button>Test 2</Button>
-            <Button>Test 3</Button>
-            <Button>Test 4</Button>
+            <Button Command="{Binding FixedSizeTest1Command}">Fixed Size Test 1</Button>
+            <Button Command="{Binding FixedSizeTest2Command}">Fixed Size Test 2</Button>
+            <Button Command="{Binding ResetCommand}">Reset</Button>
         </StackPanel>
         <Grid>
             <Grid.ColumnDefinitions>
