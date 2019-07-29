@@ -25,11 +25,15 @@
                     <Style TargetType="{x:Type controls:MultiSelectTreeViewItem}" BasedOn="{StaticResource {x:Type TreeViewItem}}">
                         <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
                         <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                        <Setter Property="Tag" Value="{Binding DataContext, ElementName=TreeView}" />
                         <Setter Property="ContextMenu">
                             <Setter.Value>
                                 <ContextMenu>
                                     <MenuItem Header="Add" Command="{Binding AddCommand}" />
                                     <MenuItem Header="Remove" Command="{Binding RemoveCommand}" />
+                                    <Separator />
+                                    <MenuItem Header="Select" Command="{Binding PlacementTarget.Tag.SelectCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ContextMenu}}}" CommandParameter="{Binding}" />
+                                    <MenuItem Header="Unselect" Command="{Binding PlacementTarget.Tag.UnselectCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ContextMenu}}}" CommandParameter="{Binding}" />
                                 </ContextMenu>
                             </Setter.Value>
                         </Setter>

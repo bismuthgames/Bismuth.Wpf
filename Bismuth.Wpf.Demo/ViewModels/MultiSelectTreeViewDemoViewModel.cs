@@ -84,5 +84,19 @@ namespace Bismuth.Wpf.Demo.ViewModels
         {
             SelectedNodes = new ObservableCollection<NodeViewModel>();
         }
+
+        public ICommand SelectCommand => new RelayCommand<NodeViewModel>(Select);
+
+        public void Select(NodeViewModel node)
+        {
+            SelectedNodes.Add(node);
+        }
+
+        public ICommand UnselectCommand => new RelayCommand<NodeViewModel>(Unselect);
+
+        public void Unselect(NodeViewModel node)
+        {
+            SelectedNodes.Remove(node);
+        }
     }
 }
