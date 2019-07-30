@@ -13,6 +13,7 @@
             <Button Command="{Binding FixedSizeTest1Command}">Fixed Size Test 1</Button>
             <Button Command="{Binding FixedSizeTest2Command}">Fixed Size Test 2</Button>
             <Button Command="{Binding ResetCommand}">Reset</Button>
+            <Button Command="{Binding ClearCommand}">Clear</Button>
         </StackPanel>
         <Grid>
             <Grid.ColumnDefinitions>

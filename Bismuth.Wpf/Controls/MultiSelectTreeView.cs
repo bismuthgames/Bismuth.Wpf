@@ -65,31 +65,21 @@ namespace Bismuth.Wpf.Controls
             var treeView = (MultiSelectTreeView)d;
 
             treeView._suppressCollectionChanged = true;
-            treeView.IsSelectionChangeActive = true;
 
             if (e.OldValue is INotifyCollectionChanged oldObservableList)
                 oldObservableList.CollectionChanged -= treeView.CollectionChanged;
 
-            if (e.OldValue is IList oldList)
-                treeView.SetIsSelected(oldList, false);
+            treeView.UnselectAll();
 
             if (e.NewValue is IList newList)
                 treeView.SetIsSelected(newList, true);
+
+            treeView.EnsurePrimarySelectedContainer();
 
             if (e.NewValue is INotifyCollectionChanged newObservableList)
                 newObservableList.CollectionChanged += treeView.CollectionChanged;
 
             treeView._suppressCollectionChanged = false;
-            treeView.IsSelectionChangeActive = false;
-        }
-
-        private bool _suppressCollectionChanged;
-
-        private void SetIsSelected(IList target, bool value)
-        {
-            foreach (var i in EnumerateTreeViewItems())
-                if (target.Contains(i.ItemForContainer))
-                    i.IsSelected = value;
         }
 
         private void CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -118,7 +108,28 @@ namespace Bismuth.Wpf.Controls
                     break;
             }
 
+            EnsurePrimarySelectedContainer();
+
             _suppressCollectionChanged = false;
+        }
+
+        private bool _suppressCollectionChanged;
+
+        private void SetIsSelected(IList items, bool value)
+        {
+            if (value) IsSelectionChangeActive = true;
+
+            foreach (var i in EnumerateTreeViewItems())
+                if (items.Contains(i.ItemForContainer))
+                    i.IsSelected = value;
+
+            if (value) IsSelectionChangeActive = false;
+        }
+
+        private void EnsurePrimarySelectedContainer()
+        {
+            if (SelectedItems != null && SelectedItems.Count > 0)
+                EnumerateTreeViewItems().FirstOrDefault(i => i.IsSelected)?.MakePrimary();
         }
 
         internal void RefreshSelectedItems()
