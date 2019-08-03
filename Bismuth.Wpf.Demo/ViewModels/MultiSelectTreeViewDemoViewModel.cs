@@ -9,8 +9,41 @@ namespace Bismuth.Wpf.Demo.ViewModels
     {
         public MultiSelectTreeViewDemoViewModel()
         {
+            CreateTree();
+        }
+
+        private IList<NodeViewModel> _rootNodes;
+        public IList<NodeViewModel> RootNodes
+        {
+            get { return _rootNodes; }
+            set { Set(ref _rootNodes, value); }
+        }
+
+        private IList<NodeViewModel> _selectedNodes = new ObservableCollection<NodeViewModel>();
+        public IList<NodeViewModel> SelectedNodes
+        {
+            get { return _selectedNodes; }
+            set { Set(ref _selectedNodes, value); }
+        }
+
+        private int _idCounter = 0;
+        private string GetName()
+        {
+            return $"Node ({++_idCounter})";
+        }
+
+        private void RegisterRemoveCallbacks()
+        {
+            foreach (var rootNode in RootNodes)
+                rootNode.RemoveCallback += () => RootNodes.Remove(rootNode);
+        }
+
+        public ICommand CreateTreeCommand => new RelayCommand(CreateTree);
+
+        public void CreateTree()
+        {
             var rootNodes = new[]
-            {
+                        {
                 new NodeViewModel(GetName(),
                     new NodeViewModel(GetName(),
                         new NodeViewModel(GetName()),
@@ -31,27 +64,6 @@ namespace Bismuth.Wpf.Demo.ViewModels
             RootNodes = new ObservableCollection<NodeViewModel>(rootNodes);
 
             RegisterRemoveCallbacks();
-        }
-
-        public IList<NodeViewModel> RootNodes { get; }
-
-        private IList<NodeViewModel> _selectedNodes = new ObservableCollection<NodeViewModel>();
-        public IList<NodeViewModel> SelectedNodes
-        {
-            get { return _selectedNodes; }
-            set { Set(ref _selectedNodes, value); }
-        }
-
-        private int _idCounter = 0;
-        private string GetName()
-        {
-            return $"Node ({++_idCounter})";
-        }
-
-        private void RegisterRemoveCallbacks()
-        {
-            foreach (var rootNode in RootNodes)
-                rootNode.RemoveCallback += () => RootNodes.Remove(rootNode);
         }
 
         public ICommand FixedSizeTest1Command => new RelayCommand(FixedSizeTest1);

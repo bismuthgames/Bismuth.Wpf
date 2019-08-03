@@ -10,6 +10,7 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <DockPanel>
         <StackPanel DockPanel.Dock="Left">
+            <Button Command="{Binding CreateTreeCommand}">Create Tree</Button>
             <Button Command="{Binding FixedSizeTest1Command}">Fixed Size Test 1</Button>
             <Button Command="{Binding FixedSizeTest2Command}">Fixed Size Test 2</Button>
             <Button Command="{Binding ResetCommand}">Reset</Button>
@@ -31,6 +32,7 @@
                             <Setter.Value>
                                 <ContextMenu>
                                     <MenuItem Header="Add" Command="{Binding AddCommand}" />
+                                    <MenuItem Header="Add as Selected" Command="{Binding AddAsSelectedCommand}" />
                                     <MenuItem Header="Remove" Command="{Binding RemoveCommand}" />
                                     <Separator />
                                     <MenuItem Header="Select" Command="{Binding PlacementTarget.Tag.SelectCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ContextMenu}}}" CommandParameter="{Binding}" />

@@ -40,7 +40,17 @@ namespace Bismuth.Wpf.Demo.ViewModels
 
         public void Add()
         {
-            var node = new NodeViewModel("Fisk");
+            var node = new NodeViewModel("New Node");
+            node.RemoveCallback = () => Children.Remove(node);
+            Children.Add(node);
+        }
+
+        public ICommand AddAsSelectedCommand => new RelayCommand(AddAsSelected);
+
+        public void AddAsSelected()
+        {
+            var node = new NodeViewModel("New Node");
+            node.IsSelected = true;
             node.RemoveCallback = () => Children.Remove(node);
             Children.Add(node);
         }
