@@ -22,6 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -63,6 +64,8 @@
     <Compile Include="Controls\MultiSelectTreeView.cs" />
     <Compile Include="Controls\MultiSelectTreeViewItem.cs" />
     <Compile Include="Controls\SqueezePanel.cs" />
+    <Compile Include="Extensions\LogicalTree.cs" />
+    <Compile Include="Extensions\VisualTree.cs" />
     <Compile Include="Helpers\DefaultValueFactory.cs" />
     <Compile Include="Helpers\MouseHelper.cs" />
     <Compile Include="Helpers\WindowHelper.cs" />
