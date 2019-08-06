@@ -1,0 +1,79 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controls="clr-namespace:Bismuth.Wpf.Controls">
+
+    <Style TargetType="{x:Type controls:DragDropScope}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:DragDropScope}">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}">
+                        <Grid>
+                            <Popup Name="PART_DragPopup" Placement="Absolute" AllowsTransparency="True" IsHitTestVisible="False">
+                                <Border Background="#111" BorderBrush="#666" BorderThickness="1"
+                                        Margin="8" Padding="4,2" SnapsToDevicePixels="True">
+                                    <Border.Effect>
+                                        <DropShadowEffect ShadowDepth="2" />
+                                    </Border.Effect>
+                                    <DockPanel>
+                                        <Path DockPanel.Dock="Left" Name="Icon" Width="16" Height="16" Stroke="Red" StrokeThickness="2" StrokeEndLineCap="Flat" StrokeStartLineCap="Flat">
+                                            <Path.Data>
+                                                <GeometryGroup>
+                                                    <EllipseGeometry Center="8,8" RadiusX="6" RadiusY="6" />
+                                                    <LineGeometry StartPoint="12,4" EndPoint="4,12" />
+                                                </GeometryGroup>
+                                            </Path.Data>
+                                        </Path>
+                                        <ContentControl Content="{TemplateBinding DragContent}"
+                                                        ContentTemplate="{TemplateBinding DragContentTemplate}"
+                                                        TextElement.Foreground="#BBB" />
+                                    </DockPanel>
+                                </Border>
+                            </Popup>
+                            <ContentPresenter />
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Operation" Value="None">
+                            <Setter TargetName="Icon" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="Operation" Value="Move">
+                            <Setter TargetName="Icon" Property="Stroke" Value="#8DD28A" />
+                            <Setter TargetName="Icon" Property="Data" Value="M3,8L11,8 M7.5,3.5L12,8 7.5,12.5" />
+                        </Trigger>
+                        <Trigger Property="Operation" Value="Add">
+                            <Setter TargetName="Icon" Property="Stroke" Value="#8DD28A" />
+                            <Setter TargetName="Icon" Property="Data" Value="M4,8L12,8 M8,4L8,12" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type controls:DropTarget}">
+        <Setter Property="Background" Value="#55AAFF" />
+        <Setter Property="BorderBrush" Value="#CCC" />
+        <Setter Property="BorderThickness" Value="6" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:DropTarget}">
+                    <Grid>
+                        <ContentPresenter />
+                        <Border Name="TargetBorder" Opacity="0.66" Visibility="Hidden"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsCurrentTarget" Value="True">
+                            <Setter TargetName="TargetBorder" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>
