@@ -46,10 +46,11 @@ namespace Bismuth.Wpf.Controls
         public DragDropOperation Operation
         {
             get { return (DragDropOperation)GetValue(OperationProperty); }
-            set { SetValue(OperationProperty, value); }
+            private set { SetValue(_operationPropertyKey, value); }
         }
 
-        public static readonly DependencyProperty OperationProperty = DependencyProperty.Register(nameof(Operation), typeof(DragDropOperation), typeof(DragDropScope), new PropertyMetadata(DragDropOperation.None));
+        private static readonly DependencyPropertyKey _operationPropertyKey = DependencyProperty.RegisterReadOnly(nameof(Operation), typeof(DragDropOperation), typeof(DragDropScope), new PropertyMetadata(DragDropOperation.None));
+        public static readonly DependencyProperty OperationProperty = _operationPropertyKey.DependencyProperty;
 
         private readonly DispatcherTimer _timer = new DispatcherTimer();
 
@@ -134,8 +135,7 @@ namespace Bismuth.Wpf.Controls
 
         protected override void OnMouseUp(MouseButtonEventArgs e)
         {
-            if (_currentDropTarget != null)
-                _currentDropTarget.DropItem(_item);
+            _currentDropTarget?.DropItem(_item);
 
             Clear();
 

@@ -16,10 +16,11 @@ namespace Bismuth.Wpf.Controls
         public bool IsCurrentTarget
         {
             get { return (bool)GetValue(IsCurrentTargetProperty); }
-            set { SetValue(IsCurrentTargetProperty, value); }
+            internal set { SetValue(_isCurrentTargetPropertyKey, value); }
         }
 
-        public static readonly DependencyProperty IsCurrentTargetProperty = DependencyProperty.Register(nameof(IsCurrentTarget), typeof(bool), typeof(DropTarget));
+        private static readonly DependencyPropertyKey _isCurrentTargetPropertyKey = DependencyProperty.RegisterReadOnly(nameof(IsCurrentTarget), typeof(bool), typeof(DropTarget), new PropertyMetadata(false));
+        public static readonly DependencyProperty IsCurrentTargetProperty = _isCurrentTargetPropertyKey.DependencyProperty;
 
         public ICommand DropCommand
         {
@@ -48,15 +49,11 @@ namespace Bismuth.Wpf.Controls
 
         public virtual void DropItem(object item)
         {
-            if (DropCommand != null && DropCommand.CanExecute(item))
-            {
+            if (DropCommand != null &&
+                DropCommand.CanExecute(item))
                 DropCommand.Execute(item);
-            }
 
-            if (ItemDropped != null)
-            {
-                ItemDropped(this, new ItemDroppedEventArgs(item));
-            }
+            ItemDropped?.Invoke(this, new ItemDroppedEventArgs(item));
         }
 
         public event EventHandler<ItemDroppedEventArgs> ItemDropped;
