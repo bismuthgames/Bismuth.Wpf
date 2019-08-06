@@ -144,7 +144,7 @@ namespace Bismuth.Wpf.Controls
 
         private HitTestResultBehavior HitTestResultCallback(HitTestResult result)
         {
-            if (result.VisualHit is DropTarget dropTarget)
+            if (result.VisualHit is DropTarget dropTarget && dropTarget.AcceptItem(_item))
             {
                 if (_hitDropTarget == null || dropTarget.DropZIndex > _hitDropTarget.DropZIndex)
                     _hitDropTarget = dropTarget;

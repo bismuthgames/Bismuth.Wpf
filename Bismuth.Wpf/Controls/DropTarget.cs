@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using Bismuth.Wpf.Helpers;
 
 namespace Bismuth.Wpf.Controls
 {
@@ -22,13 +25,29 @@ namespace Bismuth.Wpf.Controls
         private static readonly DependencyPropertyKey _isCurrentTargetPropertyKey = DependencyProperty.RegisterReadOnly(nameof(IsCurrentTarget), typeof(bool), typeof(DropTarget), new PropertyMetadata(false));
         public static readonly DependencyProperty IsCurrentTargetProperty = _isCurrentTargetPropertyKey.DependencyProperty;
 
+        public Func<object, bool> AcceptFunction
+        {
+            get { return (Func<object, bool>)GetValue(AcceptFunctionProperty); }
+            set { SetValue(AcceptFunctionProperty, value); }
+        }
+
+        public static readonly DependencyProperty AcceptFunctionProperty = DependencyProperty.Register(nameof(AcceptFunction), typeof(Func<object, bool>), typeof(DropTarget));
+
+        public IList<Type> AcceptTypes
+        {
+            get { return (IList<Type>)GetValue(AcceptTypesProperty); }
+            set { SetValue(AcceptTypesProperty, value); }
+        }
+
+        public static readonly DependencyProperty AcceptTypesProperty = DependencyProperty.Register(nameof(AcceptTypes), typeof(IList<Type>), typeof(DropTarget), new PropertyMetadata(DefaultValueFactory.CreateObservableCollection<Type>()));
+
         public ICommand DropCommand
         {
             get { return (ICommand)GetValue(DropCommandProperty); }
             set { SetValue(DropCommandProperty, value); }
         }
 
-        public static readonly DependencyProperty DropCommandProperty = DependencyProperty.Register("DropCommand", typeof(ICommand), typeof(DropTarget));
+        public static readonly DependencyProperty DropCommandProperty = DependencyProperty.Register(nameof(DropCommand), typeof(ICommand), typeof(DropTarget));
 
         public int DropZIndex
         {
@@ -45,6 +64,13 @@ namespace Bismuth.Wpf.Controls
                 return new PointHitTestResult(this, hitTestParameters.HitPoint);
 
             return null;
+        }
+
+        public virtual bool AcceptItem(object item)
+        {
+            if (AcceptFunction != null) return AcceptFunction(item);
+            if (AcceptTypes == null) return false;
+            return AcceptTypes.Any(t => t.IsInstanceOfType(item));
         }
 
         public virtual void DropItem(object item)

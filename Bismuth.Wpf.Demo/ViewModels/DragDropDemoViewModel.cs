@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using Bismuth.Mvvm;
@@ -13,12 +14,15 @@ namespace Bismuth.Wpf.Demo.ViewModels
             {
                 new DragDropItemViewModel("Drag me"),
                 new DragDropItemViewModel("No! Drag me!!"),
-                new DragDropItemViewModel("Leave me alone!")
+                new DragDropItemViewModel("Leave me alone!"),
+                new DragDropItemViewModel("Not accepted")
             };
         }
 
         public IList<DragDropItemViewModel> ItemsA { get; }
         public IList<DragDropItemViewModel> ItemsB { get; } = new ObservableCollection<DragDropItemViewModel>();
+
+        public Func<object, bool> AcceptFunction { get; } = item => item is DragDropItemViewModel dragDropItem && dragDropItem.Text != "Not accepted";
 
         public ICommand DropOnACommand => new RelayCommand<DragDropItemViewModel>(DropOnA);
 

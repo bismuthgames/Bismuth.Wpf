@@ -24,7 +24,7 @@
                 <ColumnDefinition Width="6" />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <controls:DropTarget ItemDropped="DropTarget_ItemDropped">
+            <controls:DropTarget ItemDropped="DropTarget_ItemDropped" AcceptFunction="{Binding AcceptFunction}">
                 <ItemsControl ItemsSource="{Binding ItemsA}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -44,6 +44,11 @@
             </controls:DropTarget>
             <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" />
             <controls:DropTarget Grid.Column="2" DropCommand="{Binding DropOnBCommand}">
+                <controls:DropTarget.AcceptTypes>
+                    <x:Array xmlns:sys="clr-namespace:System;assembly=mscorlib" Type="sys:Type">
+                        <x:Type Type="vm:DragDropItemViewModel" />
+                    </x:Array>
+                </controls:DropTarget.AcceptTypes>
                 <ItemsControl ItemsSource="{Binding ItemsB}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
