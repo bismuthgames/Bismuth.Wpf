@@ -16,6 +16,14 @@ namespace Bismuth.Wpf.Controls
             DefaultStyleKeyProperty.OverrideMetadata(typeof(DropTarget), new FrameworkPropertyMetadata(typeof(DropTarget)));
         }
 
+        public event ItemDroppedEventHandler ItemDropped
+        {
+            add { AddHandler(ItemDroppedEvent, value); }
+            remove { RemoveHandler(ItemDroppedEvent, value); }
+        }
+
+        public static readonly RoutedEvent ItemDroppedEvent = EventManager.RegisterRoutedEvent(nameof(ItemDropped), RoutingStrategy.Bubble, typeof(ItemDroppedEventHandler), typeof(DropTarget));
+
         public bool IsCurrentTarget
         {
             get { return (bool)GetValue(IsCurrentTargetProperty); }
@@ -79,15 +87,15 @@ namespace Bismuth.Wpf.Controls
                 DropCommand.CanExecute(item))
                 DropCommand.Execute(item);
 
-            ItemDropped?.Invoke(this, new ItemDroppedEventArgs(item));
+            RaiseEvent(new ItemDroppedEventArgs(ItemDroppedEvent, this, item));
         }
-
-        public event EventHandler<ItemDroppedEventArgs> ItemDropped;
     }
 
-    public class ItemDroppedEventArgs : EventArgs
+    public delegate void ItemDroppedEventHandler(object sender, ItemDroppedEventArgs e);
+
+    public class ItemDroppedEventArgs : RoutedEventArgs
     {
-        public ItemDroppedEventArgs(object item)
+        public ItemDroppedEventArgs(RoutedEvent routedEvent, object source, object item) : base(routedEvent, source)
         {
             Item = item;
         }
