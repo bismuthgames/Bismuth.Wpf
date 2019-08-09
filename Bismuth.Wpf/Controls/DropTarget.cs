@@ -5,7 +5,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using Bismuth.Wpf.Helpers;
 
 namespace Bismuth.Wpf.Controls
 {
@@ -41,13 +40,13 @@ namespace Bismuth.Wpf.Controls
 
         public static readonly DependencyProperty AcceptFunctionProperty = DependencyProperty.Register(nameof(AcceptFunction), typeof(Func<object, bool>), typeof(DropTarget));
 
-        public IList<Type> AcceptTypes
+        public IEnumerable<Type> AcceptTypes
         {
-            get { return (IList<Type>)GetValue(AcceptTypesProperty); }
+            get { return (IEnumerable<Type>)GetValue(AcceptTypesProperty); }
             set { SetValue(AcceptTypesProperty, value); }
         }
 
-        public static readonly DependencyProperty AcceptTypesProperty = DependencyProperty.Register(nameof(AcceptTypes), typeof(IList<Type>), typeof(DropTarget), new PropertyMetadata(DefaultValueFactory.CreateObservableCollection<Type>()));
+        public static readonly DependencyProperty AcceptTypesProperty = DependencyProperty.Register(nameof(AcceptTypes), typeof(IEnumerable<Type>), typeof(DropTarget));
 
         public ICommand DropCommand
         {
@@ -77,8 +76,8 @@ namespace Bismuth.Wpf.Controls
         public virtual bool AcceptItem(object item)
         {
             if (AcceptFunction != null) return AcceptFunction(item);
-            if (AcceptTypes == null) return false;
-            return AcceptTypes.Any(t => t.IsInstanceOfType(item));
+            if (AcceptTypes != null) return AcceptTypes.Any(t => t.IsInstanceOfType(item));
+            return false;
         }
 
         public virtual void DropItem(object item)
