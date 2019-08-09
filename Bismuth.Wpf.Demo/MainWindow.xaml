@@ -32,8 +32,11 @@
             <TabItem Header="MultiSelectTreeView">
                 <v:MultiSelectTreeViewDemoView DataContext="{Binding MultiSelectTreeViewDemo}" />
             </TabItem>
-            <TabItem Header="DragDrop" IsSelected="True">
+            <TabItem Header="DragDrop">
                 <v:DragDropDemoView DataContext="{Binding DragDropDemo}" />
+            </TabItem>
+            <TabItem Header="DragDropTreeView" IsSelected="True">
+                <v:DragDropTreeViewDemoView DataContext="{Binding DragDropTreeViewDemo}" />
             </TabItem>
         </TabControl>
     </Border>

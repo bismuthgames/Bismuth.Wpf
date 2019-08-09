@@ -40,7 +40,7 @@ namespace Bismuth.Wpf.Demo.ViewModels
 
         public void Add()
         {
-            var node = new NodeViewModel("New Node");
+            var node = new NodeViewModel($"New Node ({IdGenerator.GetNext()})");
             node.RemoveCallback = () => Children.Remove(node);
             Children.Add(node);
         }
@@ -49,7 +49,7 @@ namespace Bismuth.Wpf.Demo.ViewModels
 
         public void AddAsSelected()
         {
-            var node = new NodeViewModel("New Node");
+            var node = new NodeViewModel($"New Node ({IdGenerator.GetNext()})");
             node.IsSelected = true;
             node.RemoveCallback = () => Children.Remove(node);
             Children.Add(node);

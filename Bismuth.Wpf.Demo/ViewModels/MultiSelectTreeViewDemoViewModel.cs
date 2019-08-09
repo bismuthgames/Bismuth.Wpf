@@ -26,18 +26,6 @@ namespace Bismuth.Wpf.Demo.ViewModels
             set { Set(ref _selectedNodes, value); }
         }
 
-        private int _idCounter = 0;
-        private string GetName()
-        {
-            return $"Node ({++_idCounter})";
-        }
-
-        private void RegisterRemoveCallbacks()
-        {
-            foreach (var rootNode in RootNodes)
-                rootNode.RemoveCallback += () => RootNodes.Remove(rootNode);
-        }
-
         public ICommand CreateTreeCommand => new RelayCommand(CreateTree);
 
         public void CreateTree()
@@ -64,6 +52,17 @@ namespace Bismuth.Wpf.Demo.ViewModels
             RootNodes = new ObservableCollection<NodeViewModel>(rootNodes);
 
             RegisterRemoveCallbacks();
+        }
+
+        private string GetName()
+        {
+            return $"Node ({IdGenerator.GetNext()})";
+        }
+
+        private void RegisterRemoveCallbacks()
+        {
+            foreach (var rootNode in RootNodes)
+                rootNode.RemoveCallback += () => RootNodes.Remove(rootNode);
         }
 
         public ICommand FixedSizeTest1Command => new RelayCommand(FixedSizeTest1);
