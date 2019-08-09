@@ -71,6 +71,8 @@
     <Compile Include="Controls\MultiSelectTreeView.cs" />
     <Compile Include="Controls\MultiSelectTreeViewItem.cs" />
     <Compile Include="Controls\SqueezePanel.cs" />
+    <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
+    <Compile Include="Converters\DepthToIndentConverter.cs" />
     <Compile Include="Extensions\LogicalTree.cs" />
     <Compile Include="Extensions\VisualTree.cs" />
     <Compile Include="Helpers\DefaultValueFactory.cs" />
