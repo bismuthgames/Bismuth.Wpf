@@ -191,12 +191,12 @@ namespace Bismuth.Wpf.Controls
 
         internal object ItemForContainer { get { return ParentItemsControl.ItemContainerGenerator.ItemFromContainer(this); } }
 
-        private ItemsControl ParentItemsControl
+        internal ItemsControl ParentItemsControl
         {
             get { return ItemsControlFromItemContainer(this); }
         }
 
-        private MultiSelectTreeView ParentTreeView
+        internal MultiSelectTreeView ParentTreeView
         {
             get
             {
