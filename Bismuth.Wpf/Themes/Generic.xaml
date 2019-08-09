@@ -3,6 +3,7 @@
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="/Bismuth.Wpf;component/Themes/Styles/BorderlessWindow.xaml" />
         <ResourceDictionary Source="/Bismuth.Wpf;component/Themes/Styles/DragDropScope.xaml" />
+        <ResourceDictionary Source="/Bismuth.Wpf;component/Themes/Styles/DragDropTreeView.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
 </ResourceDictionary>
