@@ -67,6 +67,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\AdornerInserter.cs" />
     <Compile Include="Controls\BorderlessWindow.cs" />
     <Compile Include="Controls\BorderlessWindowCore.cs" />
     <Compile Include="Controls\DragDropScope.cs" />
