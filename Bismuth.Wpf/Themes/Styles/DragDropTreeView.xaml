@@ -2,43 +2,45 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:controls="clr-namespace:Bismuth.Wpf.Controls">
 
-    <SolidColorBrush x:Key="ListBorder" Color="#828790" />
+    <SolidColorBrush x:Key="DragDropTreeView.Foreground" Color="#FFF" />
+    <SolidColorBrush x:Key="DragDropTreeView.Foreground.Disabled" Color="#888" />
+    <SolidColorBrush x:Key="DragDropTreeView.Background" Color="#111" />
+    <SolidColorBrush x:Key="DragDropTreeView.Background.Disabled" Color="#111" />
 
     <Style TargetType="{x:Type controls:DragDropTreeView}">
-        <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
-        <Setter Property="BorderBrush" Value="{StaticResource ListBorder}" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="Padding" Value="1" />
-        <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
+        <Setter Property="Foreground" Value="{DynamicResource DragDropTreeView.Foreground}" />
+        <Setter Property="Background" Value="{DynamicResource DragDropTreeView.Background}" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Stretch" />
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
         <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
         <Setter Property="ScrollViewer.PanningMode" Value="Both" />
         <Setter Property="Stylus.IsFlicksEnabled" Value="False" />
-        <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type controls:DragDropTreeView}">
-                    <Border Name="Bd"
+                    <Border Name="Border"
+                            Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             SnapsToDevicePixels="True">
-                        <ScrollViewer Name="_tv_scrollviewer_"
-                                      Background="{TemplateBinding Background}"
-                                      CanContentScroll="False"
-                                      Focusable="False"
+                        <ScrollViewer Name="ScrollViewer"
                                       Padding="{TemplateBinding Padding}"
-                                      SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                      Focusable="False"
+                                      CanContentScroll="False"
                                       HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
-                                      VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}">
+                                      VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
+                                      SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
                             <ItemsPresenter />
                         </ScrollViewer>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+                            <Setter Property="Foreground" Value="{DynamicResource DragDropTreeView.Foreground.Disabled}" />
+                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource DragDropTreeView.Background.Disabled}" />
                         </Trigger>
                         <Trigger Property="VirtualizingPanel.IsVirtualizing" Value="True">
-                            <Setter TargetName="_tv_scrollviewer_" Property="CanContentScroll" Value="True" />
+                            <Setter TargetName="ScrollViewer" Property="CanContentScroll" Value="True" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
