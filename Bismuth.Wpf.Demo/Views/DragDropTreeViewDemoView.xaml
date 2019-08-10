@@ -8,21 +8,21 @@
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance vm:DragDropTreeViewDemoViewModel, IsDesignTimeCreatable=False}"
              d:DesignHeight="450" d:DesignWidth="800">
-    <controls:DragDropTreeView x:Name="TreeView" ItemsSource="{Binding RootNodes}" SelectedItems="{Binding SelectedNodes}">
+    <controls:DragDropTreeView ItemsSource="{Binding RootNodes}" SelectedItems="{Binding SelectedNodes}">
         <controls:DragDropTreeView.ItemContainerStyle>
-            <Style TargetType="{x:Type controls:MultiSelectTreeViewItem}" BasedOn="{StaticResource {x:Type TreeViewItem}}">
+            <Style TargetType="{x:Type controls:DragDropTreeViewItem}" BasedOn="{StaticResource {x:Type controls:DragDropTreeViewItem}}">
                 <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
                 <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
-                <Setter Property="Tag" Value="{Binding DataContext, ElementName=TreeView}" />
+                <Setter Property="AcceptTypes" Value="{Binding AcceptTypes}" />
+                <Setter Property="DropCommand" Value="{Binding DropCommand}" />
+                <Setter Property="DropBeforeCommand" Value="{Binding DropBeforeCommand}" />
+                <Setter Property="DropAfterCommand" Value="{Binding DropAfterCommand}" />
                 <Setter Property="ContextMenu">
                     <Setter.Value>
                         <ContextMenu>
                             <MenuItem Header="Add" Command="{Binding AddCommand}" />
                             <MenuItem Header="Add as Selected" Command="{Binding AddAsSelectedCommand}" />
                             <MenuItem Header="Remove" Command="{Binding RemoveCommand}" />
-                            <!--<Separator />
-                            <MenuItem Header="Select" Command="{Binding PlacementTarget.Tag.SelectCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ContextMenu}}}" CommandParameter="{Binding}" />
-                            <MenuItem Header="Unselect" Command="{Binding PlacementTarget.Tag.UnselectCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ContextMenu}}}" CommandParameter="{Binding}" />-->
                         </ContextMenu>
                     </Setter.Value>
                 </Setter>
@@ -30,7 +30,9 @@
         </controls:DragDropTreeView.ItemContainerStyle>
         <controls:DragDropTreeView.Resources>
             <HierarchicalDataTemplate DataType="{x:Type vm:DragDropNodeViewModel}" ItemsSource="{Binding Children}">
-                <TextBlock Text="{Binding Name}" />
+                <Border Height="21">
+                    <TextBlock Text="{Binding Name}" VerticalAlignment="Center" />
+                </Border>
             </HierarchicalDataTemplate>
         </controls:DragDropTreeView.Resources>
     </controls:DragDropTreeView>

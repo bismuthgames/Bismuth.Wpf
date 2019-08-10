@@ -1,11 +1,24 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:controls="clr-namespace:Bismuth.Wpf.Controls">
+                    xmlns:controls="clr-namespace:Bismuth.Wpf.Controls"
+                    xmlns:converters="clr-namespace:Bismuth.Wpf.Converters">
+
+    <converters:DepthToIndentConverter x:Key="DepthToIndent" IndentLength="20" />
 
     <SolidColorBrush x:Key="DragDropTreeView.Foreground" Color="#FFF" />
     <SolidColorBrush x:Key="DragDropTreeView.Foreground.Disabled" Color="#888" />
     <SolidColorBrush x:Key="DragDropTreeView.Background" Color="#111" />
     <SolidColorBrush x:Key="DragDropTreeView.Background.Disabled" Color="#111" />
+
+    <SolidColorBrush x:Key="DragDropTreeViewItem.Foreground" Color="#FFF" />
+    <SolidColorBrush x:Key="DragDropTreeViewItem.Foreground.Selected" Color="#333" />
+    <SolidColorBrush x:Key="DragDropTreeViewItem.Foreground.Disabled" Color="#888" />
+    <SolidColorBrush x:Key="DragDropTreeViewItem.Background" Color="#111" />
+    <SolidColorBrush x:Key="DragDropTreeViewItem.Background.Selected" Color="#BBB" />
+    <SolidColorBrush x:Key="DragDropTreeViewItem.Background.Disabled" Color="#111" />
+    <SolidColorBrush x:Key="DragDropTreeViewItem.ExpandCollapseToggleButton.Brush" Color="#777" />
+    <SolidColorBrush x:Key="DragDropTreeViewItem.ExpandCollapseToggleButton.Brush.MouseOver" Color="#FFF" />
+    <SolidColorBrush x:Key="DragDropTreeViewItem.DropTarget.Brush" Color="#6495ED" />
 
     <Style TargetType="{x:Type controls:DragDropTreeView}">
         <Setter Property="Foreground" Value="{DynamicResource DragDropTreeView.Foreground}" />
@@ -19,21 +32,23 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type controls:DragDropTreeView}">
-                    <Border Name="Border"
-                            Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            SnapsToDevicePixels="True">
-                        <ScrollViewer Name="ScrollViewer"
-                                      Padding="{TemplateBinding Padding}"
-                                      Focusable="False"
-                                      CanContentScroll="False"
-                                      HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
-                                      VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
-                                      SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
-                            <ItemsPresenter />
-                        </ScrollViewer>
-                    </Border>
+                    <controls:DragDropScope DragContentTemplate="{TemplateBinding ItemDragTemplate}">
+                        <Border Name="Border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                SnapsToDevicePixels="True">
+                            <ScrollViewer Name="ScrollViewer"
+                                          Padding="{TemplateBinding Padding}"
+                                          Focusable="False"
+                                          CanContentScroll="False"
+                                          HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
+                                          VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
+                                          SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
+                                <ItemsPresenter />
+                            </ScrollViewer>
+                        </Border>
+                    </controls:DragDropScope>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Foreground" Value="{DynamicResource DragDropTreeView.Foreground.Disabled}" />
@@ -69,55 +84,72 @@
         </Setter>
     </Style>
 
-    <SolidColorBrush x:Key="TreeViewItem.TreeArrow.Static.Checked.Fill" Color="#FF595959" />
-    <SolidColorBrush x:Key="TreeViewItem.TreeArrow.Static.Checked.Stroke" Color="#FF262626" />
-    <SolidColorBrush x:Key="TreeViewItem.TreeArrow.MouseOver.Stroke" Color="#FF1BBBFA" />
-    <SolidColorBrush x:Key="TreeViewItem.TreeArrow.MouseOver.Fill" Color="Transparent" />
-    <SolidColorBrush x:Key="TreeViewItem.TreeArrow.MouseOver.Checked.Stroke" Color="#FF262626" />
-    <SolidColorBrush x:Key="TreeViewItem.TreeArrow.MouseOver.Checked.Fill" Color="#FF595959" />
-    <PathGeometry x:Key="TreeArrow" Figures="M0,0 L0,6 L6,0 z" />
-    <SolidColorBrush x:Key="TreeViewItem.TreeArrow.Static.Fill" Color="Transparent" />
-    <SolidColorBrush x:Key="TreeViewItem.TreeArrow.Static.Stroke" Color="#FF989898" />
-
-    <Style x:Key="ExpandCollapseToggleStyle" TargetType="{x:Type ToggleButton}">
+    <Style x:Key="ExpandCollapseToggleButtonStyle" TargetType="{x:Type ToggleButton}">
+        <Setter Property="Foreground" Value="{DynamicResource DragDropTreeViewItem.ExpandCollapseToggleButton.Brush}" />
         <Setter Property="Focusable" Value="False" />
-        <Setter Property="Width" Value="16" />
-        <Setter Property="Height" Value="16" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ToggleButton}">
-                    <Border Background="Transparent" Height="16" Padding="5" Width="16">
+                    <Border Width="20" Height="20" Background="Transparent">
                         <Path Name="ExpandPath"
-                              Data="{StaticResource TreeArrow}"
-                              Fill="{StaticResource TreeViewItem.TreeArrow.Static.Fill}"
-                              Stroke="{StaticResource TreeViewItem.TreeArrow.Static.Stroke}">
-                            <Path.RenderTransform>
-                                <RotateTransform Angle="135" CenterY="3" CenterX="3" />
-                            </Path.RenderTransform>
-                        </Path>
+                              HorizontalAlignment="Center"
+                              VerticalAlignment="Center"
+                              Data="M0,7L7,0 7,7z"
+                              Fill="{TemplateBinding Foreground}"
+                              Stroke="{TemplateBinding Foreground}"
+                              StrokeThickness="0" />
                     </Border>
                     <ControlTemplate.Triggers>
-                        <Trigger Property="IsChecked" Value="True">
-                            <Setter TargetName="ExpandPath" Property="RenderTransform">
-                                <Setter.Value>
-                                    <RotateTransform Angle="180" CenterY="3" CenterX="3" />
-                                </Setter.Value>
-                            </Setter>
-                            <Setter TargetName="ExpandPath" Property="Fill" Value="{StaticResource TreeViewItem.TreeArrow.Static.Checked.Fill}" />
-                            <Setter TargetName="ExpandPath" Property="Stroke" Value="{StaticResource TreeViewItem.TreeArrow.Static.Checked.Stroke}" />
+                        <Trigger Property="IsChecked" Value="False">
+                            <Setter TargetName="ExpandPath" Property="Data" Value="M0.5,0.5L4.5,4.5 0.5,8.5z" />
+                            <Setter TargetName="ExpandPath" Property="Fill" Value="Transparent" />
+                            <Setter TargetName="ExpandPath" Property="StrokeThickness" Value="1" />
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="ExpandPath" Property="Stroke" Value="{StaticResource TreeViewItem.TreeArrow.MouseOver.Stroke}" />
-                            <Setter TargetName="ExpandPath" Property="Fill" Value="{StaticResource TreeViewItem.TreeArrow.MouseOver.Fill}" />
+                            <Setter Property="Foreground" Value="{DynamicResource DragDropTreeViewItem.ExpandCollapseToggleButton.Brush.MouseOver}" />
                         </Trigger>
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsMouseOver" Value="True" />
-                                <Condition Property="IsChecked" Value="True" />
-                            </MultiTrigger.Conditions>
-                            <Setter TargetName="ExpandPath" Property="Stroke" Value="{StaticResource TreeViewItem.TreeArrow.MouseOver.Checked.Stroke}" />
-                            <Setter TargetName="ExpandPath" Property="Fill" Value="{StaticResource TreeViewItem.TreeArrow.MouseOver.Checked.Fill}" />
-                        </MultiTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="DragDropTreeViewItem.DropTargetStyle" TargetType="{x:Type controls:DropTarget}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:DropTarget}">
+                    <Grid>
+                        <ContentPresenter />
+                        <Border Name="Border"
+                                BorderBrush="{DynamicResource DragDropTreeViewItem.DropTarget.Brush}"
+                                BorderThickness="1"
+                                Visibility="Hidden" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsCurrentTarget" Value="True">
+                            <Setter TargetName="Border" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="DragDropTreeViewItem.BeforeAfterDropTargetStyle" TargetType="{x:Type controls:DropTarget}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:DropTarget}">
+                    <controls:AdornerInserter x:Name="Border" Visibility="Hidden">
+                        <Grid SnapsToDevicePixels="True">
+                            <Path Data="M0,0L 4.5,4.5 0,9z" Fill="{DynamicResource DragDropTreeViewItem.DropTarget.Brush}" VerticalAlignment="Center" HorizontalAlignment="Left" />
+                            <Path Data="M0,0L-4.5,4.5 0,9z" Fill="{DynamicResource DragDropTreeViewItem.DropTarget.Brush}" VerticalAlignment="Center" HorizontalAlignment="Right" />
+                            <Rectangle Fill="{DynamicResource DragDropTreeViewItem.DropTarget.Brush}" Height="1" VerticalAlignment="Center" />
+                        </Grid>
+                    </controls:AdornerInserter>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsCurrentTarget" Value="True">
+                            <Setter TargetName="Border" Property="Visibility" Value="Visible" />
+                        </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
@@ -125,41 +157,61 @@
     </Style>
 
     <Style TargetType="{x:Type controls:DragDropTreeViewItem}">
+        <Setter Property="Foreground" Value="{DynamicResource DragDropTreeViewItem.Foreground}" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" />
         <Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" />
-        <Setter Property="Padding" Value="1,0,0,0" />
-        <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
         <Setter Property="FocusVisualStyle" Value="{StaticResource TreeViewItemFocusVisual}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type controls:DragDropTreeViewItem}">
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition MinWidth="19" Width="Auto" />
                             <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition />
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
-                            <RowDefinition />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <ToggleButton Name="Expander"
+
+                        <controls:DropTarget x:Name="PART_DropTarget" Grid.ColumnSpan="2" Grid.Row="1"
+                                             AcceptTypes="{TemplateBinding AcceptTypes}"
+                                             DropCommand="{TemplateBinding DropCommand}"
+                                             Style="{StaticResource DragDropTreeViewItem.DropTargetStyle}">
+                            <Border Name="Border"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}" />
+                        </controls:DropTarget>
+
+                        <ToggleButton Name="Expander" Grid.Row="1"
+                                      Margin="{Binding RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource DepthToIndent}}"
                                       ClickMode="Press"
                                       IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"
-                                      Style="{StaticResource ExpandCollapseToggleStyle}" />
-                        <Border Name="Bd" Grid.Column="1"
-                                Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                Padding="{TemplateBinding Padding}"
-                                SnapsToDevicePixels="True">
-                            <ContentPresenter Name="PART_Header"
-                                              ContentSource="Header"
-                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                        </Border>
-                        <ItemsPresenter Name="ItemsHost" Grid.ColumnSpan="2" Grid.Column="1" Grid.Row="1" />
+                                      Style="{StaticResource ExpandCollapseToggleButtonStyle}" />
+
+                        <ContentPresenter Name="PART_Header" Grid.Column="1" Grid.Row="1"
+                                          ContentSource="Header"
+                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+
+                        <controls:DropTarget x:Name="PART_BeforeDropTarget" Grid.Column="1" Grid.Row="0"
+                                             Height="12" Margin="0,-6"
+                                             AcceptTypes="{TemplateBinding AcceptTypes}"
+                                             DropCommand="{TemplateBinding DropBeforeCommand}"
+                                             Style="{StaticResource DragDropTreeViewItem.BeforeAfterDropTargetStyle}" />
+
+                        <controls:DropTarget x:Name="PART_AfterDropTarget" Grid.Column="1" Grid.Row="3"
+                                             Height="12" Margin="0,-6"
+                                             AcceptTypes="{TemplateBinding AcceptTypes}"
+                                             DropCommand="{TemplateBinding DropAfterCommand}"
+                                             Style="{StaticResource DragDropTreeViewItem.BeforeAfterDropTargetStyle}" />
+
+                        <ItemsPresenter Name="ItemsHost" Grid.ColumnSpan="2" Grid.Row="2" />
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsExpanded" Value="False">
@@ -169,19 +221,19 @@
                             <Setter TargetName="Expander" Property="Visibility" Value="Hidden" />
                         </Trigger>
                         <Trigger Property="IsSelected" Value="True">
-                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
-                            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}" />
+                            <Setter Property="Foreground" Value="{DynamicResource DragDropTreeViewItem.Foreground.Selected}" />
+                            <Setter Property="Background" Value="{DynamicResource DragDropTreeViewItem.Background.Selected}" />
                         </Trigger>
-                        <MultiTrigger>
+                        <!--<MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsSelected" Value="True" />
                                 <Condition Property="IsSelectionActive" Value="False" />
                             </MultiTrigger.Conditions>
-                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource {x:Static SystemColors.InactiveSelectionHighlightBrushKey}}" />
-                            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}}" />
-                        </MultiTrigger>
+                            <Setter Property="Foreground" Value="{DynamicResource DragDropTreeViewItem.Foreground.Selected}" />
+                            <Setter Property="Background" Value="{DynamicResource DragDropTreeViewItem.Background.Selected}" />
+                        </MultiTrigger>-->
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
+                            <Setter Property="Foreground" Value="{DynamicResource DragDropTreeView.Foreground.Disabled}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
