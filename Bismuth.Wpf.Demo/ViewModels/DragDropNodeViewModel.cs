@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Input;
 using Bismuth.Mvvm;
 
@@ -10,24 +13,24 @@ namespace Bismuth.Wpf.Demo.ViewModels
         {
         }
 
-        public Func<object, bool> AcceptFunction { get; } = item => true;
-        public Type[] AcceptTypes { get; } = new[] { typeof(object[]) };
+        public Func<object, bool> AcceptFunction { get; } = item => item is IList<object> list && list.All(x => x is DragDropNodeViewModel);
+        public Type[] AcceptTypes { get; } = new[] { typeof(IList) };
 
-        public ICommand DropCommand => new RelayCommand<DragDropNodeViewModel[]>(Drop);
+        public ICommand DropCommand => new RelayCommand<IList>(Drop);
 
-        public void Drop(DragDropNodeViewModel[] nodes)
+        public void Drop(IList nodes)
         {
         }
 
-        public ICommand DropBeforeCommand => new RelayCommand<DragDropNodeViewModel[]>(DropBefore);
+        public ICommand DropBeforeCommand => new RelayCommand<IList>(DropBefore);
 
-        public void DropBefore(DragDropNodeViewModel[] nodes)
+        public void DropBefore(IList nodes)
         {
         }
 
-        public ICommand DropAfterCommand => new RelayCommand<DragDropNodeViewModel[]>(DropAfter);
+        public ICommand DropAfterCommand => new RelayCommand<IList>(DropAfter);
 
-        public void DropAfter(DragDropNodeViewModel[] nodes)
+        public void DropAfter(IList nodes)
         {
         }
     }

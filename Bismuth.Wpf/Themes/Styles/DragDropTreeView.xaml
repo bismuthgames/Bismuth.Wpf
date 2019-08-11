@@ -6,18 +6,18 @@
     <converters:DepthToIndentConverter x:Key="DepthToIndent" IndentLength="20" />
 
     <SolidColorBrush x:Key="DragDropTreeView.Foreground" Color="#FFF" />
-    <SolidColorBrush x:Key="DragDropTreeView.Foreground.Disabled" Color="#888" />
     <SolidColorBrush x:Key="DragDropTreeView.Background" Color="#111" />
-    <SolidColorBrush x:Key="DragDropTreeView.Background.Disabled" Color="#111" />
+    <SolidColorBrush x:Key="DragDropTreeView.Disabled.Foreground" Color="#888" />
+    <SolidColorBrush x:Key="DragDropTreeView.Disabled.Background" Color="#111" />
 
     <SolidColorBrush x:Key="DragDropTreeViewItem.Foreground" Color="#FFF" />
-    <SolidColorBrush x:Key="DragDropTreeViewItem.Foreground.Selected" Color="#333" />
-    <SolidColorBrush x:Key="DragDropTreeViewItem.Foreground.Disabled" Color="#888" />
     <SolidColorBrush x:Key="DragDropTreeViewItem.Background" Color="#111" />
-    <SolidColorBrush x:Key="DragDropTreeViewItem.Background.Selected" Color="#BBB" />
-    <SolidColorBrush x:Key="DragDropTreeViewItem.Background.Disabled" Color="#111" />
+    <SolidColorBrush x:Key="DragDropTreeViewItem.Selected.Foreground" Color="#333" />
+    <SolidColorBrush x:Key="DragDropTreeViewItem.Selected.Background" Color="#BBB" />
+    <SolidColorBrush x:Key="DragDropTreeViewItem.Disabled.Foreground" Color="#888" />
+    <SolidColorBrush x:Key="DragDropTreeViewItem.Disabled.Background" Color="#111" />
     <SolidColorBrush x:Key="DragDropTreeViewItem.ExpandCollapseToggleButton.Brush" Color="#777" />
-    <SolidColorBrush x:Key="DragDropTreeViewItem.ExpandCollapseToggleButton.Brush.MouseOver" Color="#FFF" />
+    <SolidColorBrush x:Key="DragDropTreeViewItem.ExpandCollapseToggleButton.MouseOver.Brush" Color="#FFF" />
     <SolidColorBrush x:Key="DragDropTreeViewItem.DropTarget.Brush" Color="#6495ED" />
 
     <Style TargetType="{x:Type controls:DragDropTreeView}">
@@ -51,8 +51,8 @@
                     </controls:DragDropScope>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter Property="Foreground" Value="{DynamicResource DragDropTreeView.Foreground.Disabled}" />
-                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource DragDropTreeView.Background.Disabled}" />
+                            <Setter Property="Foreground" Value="{DynamicResource DragDropTreeView.Disabled.Foreground}" />
+                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource DragDropTreeView.Disabled.Background}" />
                         </Trigger>
                         <Trigger Property="VirtualizingPanel.IsVirtualizing" Value="True">
                             <Setter TargetName="ScrollViewer" Property="CanContentScroll" Value="True" />
@@ -106,7 +106,7 @@
                             <Setter TargetName="ExpandPath" Property="StrokeThickness" Value="1" />
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Foreground" Value="{DynamicResource DragDropTreeViewItem.ExpandCollapseToggleButton.Brush.MouseOver}" />
+                            <Setter Property="Foreground" Value="{DynamicResource DragDropTreeViewItem.ExpandCollapseToggleButton.MouseOver.Brush}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -178,6 +178,7 @@
                         </Grid.RowDefinitions>
 
                         <controls:DropTarget x:Name="PART_DropTarget" Grid.ColumnSpan="2" Grid.Row="1"
+                                             AcceptFunction="{TemplateBinding AcceptFunction}"
                                              AcceptTypes="{TemplateBinding AcceptTypes}"
                                              DropCommand="{TemplateBinding DropCommand}"
                                              Style="{StaticResource DragDropTreeViewItem.DropTargetStyle}">
@@ -201,12 +202,14 @@
 
                         <controls:DropTarget x:Name="PART_BeforeDropTarget" Grid.Column="1" Grid.Row="0"
                                              Height="12" Margin="0,-6"
+                                             AcceptFunction="{TemplateBinding AcceptFunction}"
                                              AcceptTypes="{TemplateBinding AcceptTypes}"
                                              DropCommand="{TemplateBinding DropBeforeCommand}"
                                              Style="{StaticResource DragDropTreeViewItem.BeforeAfterDropTargetStyle}" />
 
                         <controls:DropTarget x:Name="PART_AfterDropTarget" Grid.Column="1" Grid.Row="3"
                                              Height="12" Margin="0,-6"
+                                             AcceptFunction="{TemplateBinding AcceptFunction}"
                                              AcceptTypes="{TemplateBinding AcceptTypes}"
                                              DropCommand="{TemplateBinding DropAfterCommand}"
                                              Style="{StaticResource DragDropTreeViewItem.BeforeAfterDropTargetStyle}" />
@@ -221,19 +224,19 @@
                             <Setter TargetName="Expander" Property="Visibility" Value="Hidden" />
                         </Trigger>
                         <Trigger Property="IsSelected" Value="True">
-                            <Setter Property="Foreground" Value="{DynamicResource DragDropTreeViewItem.Foreground.Selected}" />
-                            <Setter Property="Background" Value="{DynamicResource DragDropTreeViewItem.Background.Selected}" />
+                            <Setter Property="Foreground" Value="{DynamicResource DragDropTreeViewItem.Selected.Foreground}" />
+                            <Setter Property="Background" Value="{DynamicResource DragDropTreeViewItem.Selected.Background}" />
                         </Trigger>
                         <!--<MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsSelected" Value="True" />
                                 <Condition Property="IsSelectionActive" Value="False" />
                             </MultiTrigger.Conditions>
-                            <Setter Property="Foreground" Value="{DynamicResource DragDropTreeViewItem.Foreground.Selected}" />
-                            <Setter Property="Background" Value="{DynamicResource DragDropTreeViewItem.Background.Selected}" />
+                            <Setter Property="Foreground" Value="{DynamicResource DragDropTreeViewItem.Selected.Foreground}" />
+                            <Setter Property="Background" Value="{DynamicResource DragDropTreeViewItem.Selected.Background}" />
                         </MultiTrigger>-->
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter Property="Foreground" Value="{DynamicResource DragDropTreeView.Foreground.Disabled}" />
+                            <Setter Property="Foreground" Value="{DynamicResource DragDropTreeViewItem.Disabled.Foreground}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

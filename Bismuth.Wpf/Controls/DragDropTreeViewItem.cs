@@ -18,6 +18,14 @@ namespace Bismuth.Wpf.Controls
             DefaultStyleKeyProperty.OverrideMetadata(typeof(DragDropTreeViewItem), new FrameworkPropertyMetadata(typeof(DragDropTreeViewItem)));
         }
 
+        public Func<object, bool> AcceptFunction
+        {
+            get { return (Func<object, bool>)GetValue(AcceptFunctionProperty); }
+            set { SetValue(AcceptFunctionProperty, value); }
+        }
+
+        public static readonly DependencyProperty AcceptFunctionProperty = DependencyProperty.Register(nameof(AcceptFunction), typeof(Func<object, bool>), typeof(DragDropTreeViewItem));
+
         public IEnumerable<Type> AcceptTypes
         {
             get { return (IEnumerable<Type>)GetValue(AcceptTypesProperty); }

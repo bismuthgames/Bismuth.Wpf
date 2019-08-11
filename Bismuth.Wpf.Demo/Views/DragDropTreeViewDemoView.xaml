@@ -13,7 +13,8 @@
             <Style TargetType="{x:Type controls:DragDropTreeViewItem}" BasedOn="{StaticResource {x:Type controls:DragDropTreeViewItem}}">
                 <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
                 <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
-                <Setter Property="AcceptTypes" Value="{Binding AcceptTypes}" />
+                <Setter Property="AcceptFunction" Value="{Binding AcceptFunction}" />
+                <!--<Setter Property="AcceptTypes" Value="{Binding AcceptTypes}" />-->
                 <Setter Property="DropCommand" Value="{Binding DropCommand}" />
                 <Setter Property="DropBeforeCommand" Value="{Binding DropBeforeCommand}" />
                 <Setter Property="DropAfterCommand" Value="{Binding DropAfterCommand}" />
