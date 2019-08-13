@@ -90,7 +90,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ToggleButton}">
-                    <Border Width="20" Height="20" Background="Transparent">
+                    <Border Background="Transparent">
                         <Path Name="ExpandPath"
                               HorizontalAlignment="Center"
                               VerticalAlignment="Center"
@@ -188,7 +188,7 @@
                                     BorderThickness="{TemplateBinding BorderThickness}" />
                         </controls:DropTarget>
 
-                        <ToggleButton Name="Expander" Grid.Row="1"
+                        <ToggleButton Name="Expander" Grid.Row="1" Width="20"
                                       Margin="{Binding RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource DepthToIndent}}"
                                       ClickMode="Press"
                                       IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"

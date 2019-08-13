@@ -2,6 +2,10 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:controls="clr-namespace:Bismuth.Wpf.Controls">
 
+    <SolidColorBrush x:Key="DragDropScope.DragPopup.Foreground" Color="#BBB" />
+    <SolidColorBrush x:Key="DragDropScope.DragPopup.Background" Color="#111" />
+    <SolidColorBrush x:Key="DragDropScope.DragPopup.BorderBrush" Color="#666" />
+
     <Style TargetType="{x:Type controls:DragDropScope}">
         <Setter Property="Template">
             <Setter.Value>
@@ -11,8 +15,11 @@
                             BorderThickness="{TemplateBinding BorderThickness}">
                         <Grid>
                             <Popup Name="PART_DragPopup" Placement="Absolute" AllowsTransparency="True" IsHitTestVisible="False">
-                                <Border Background="#111" BorderBrush="#666" BorderThickness="1"
-                                        Margin="8" Padding="4,2" SnapsToDevicePixels="True">
+                                <Border Background="{DynamicResource DragDropScope.DragPopup.Background}"
+                                        BorderBrush="{DynamicResource DragDropScope.DragPopup.BorderBrush}"
+                                        BorderThickness="1"
+                                        Margin="8" Padding="4,2"
+                                        SnapsToDevicePixels="True">
                                     <Border.Effect>
                                         <DropShadowEffect ShadowDepth="2" />
                                     </Border.Effect>
@@ -27,7 +34,7 @@
                                         </Path>
                                         <ContentControl Content="{TemplateBinding DragContent}"
                                                         ContentTemplate="{TemplateBinding DragContentTemplate}"
-                                                        TextElement.Foreground="#BBB" />
+                                                        TextElement.Foreground="{DynamicResource DragDropScope.DragPopup.Foreground}" />
                                     </DockPanel>
                                 </Border>
                             </Popup>

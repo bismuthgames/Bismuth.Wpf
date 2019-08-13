@@ -31,7 +31,7 @@
         </controls:DragDropTreeView.ItemContainerStyle>
         <controls:DragDropTreeView.Resources>
             <HierarchicalDataTemplate DataType="{x:Type vm:DragDropNodeViewModel}" ItemsSource="{Binding Children}">
-                <Border Height="21">
+                <Border Height="22">
                     <TextBlock Text="{Binding Name}" VerticalAlignment="Center" />
                 </Border>
             </HierarchicalDataTemplate>
