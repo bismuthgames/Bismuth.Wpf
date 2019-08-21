@@ -5,13 +5,16 @@ namespace Bismuth.Wpf.Controls
 {
     public class PropertyItem : DependencyObject
     {
-        public PropertyItem(object source, string name, Type type, bool isReadOnly, string category, object defaultValue)
+        public PropertyItem(object source, string name, Type type, bool isReadOnly, bool isAdvanced, string category, string displayName, string description, object defaultValue)
         {
             Source = source ?? throw new ArgumentNullException(nameof(source));
             Name = name ?? throw new ArgumentNullException(nameof(name));
             Type = type ?? throw new ArgumentNullException(nameof(type));
             IsReadOnly = isReadOnly;
+            IsAdvanced = isAdvanced;
             Category = category ?? throw new ArgumentNullException(nameof(category));
+            DisplayName = displayName ?? throw new ArgumentNullException(nameof(displayName));
+            Description = description;
             DefaultValue = defaultValue;
         }
 
@@ -20,7 +23,10 @@ namespace Bismuth.Wpf.Controls
         public string Name { get; }
         public Type Type { get; }
         public bool IsReadOnly { get; }
+        public bool IsAdvanced { get; }
         public string Category { get; }
+        public string DisplayName { get; }
+        public string Description { get; }
         public object DefaultValue { get; }
 
         public Type ConcreteType

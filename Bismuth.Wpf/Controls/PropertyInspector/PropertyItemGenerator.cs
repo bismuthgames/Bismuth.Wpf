@@ -36,12 +36,32 @@ namespace Bismuth.Wpf.Controls
                 .GetType()
                 .GetProperties()
                 .Where(IsBrowsable)
-                .Select(p => CreateItem(p, obj, GetCategory(p), GetDefaultValue(p)));
+                .Select(p => CreateItem(p, obj));
         }
 
         private bool IsBrowsable(PropertyInfo property)
         {
-            return property.GetCustomAttribute<BrowsableAttribute>()?.Browsable ?? true;
+            return property.GetCustomAttribute<BrowsableAttribute>()?.Browsable ?? GetEditorBrowsableState(property) != EditorBrowsableState.Never;
+        }
+
+        private bool IsAdvanced(PropertyInfo property)
+        {
+            return GetEditorBrowsableState(property) == EditorBrowsableState.Advanced;
+        }
+
+        private EditorBrowsableState GetEditorBrowsableState(PropertyInfo property)
+        {
+            return property.GetCustomAttribute<EditorBrowsableAttribute>()?.State ?? EditorBrowsableState.Always;
+        }
+
+        private string GetDisplayName(PropertyInfo property)
+        {
+            return property.GetCustomAttribute<DisplayNameAttribute>()?.DisplayName ?? property.Name;
+        }
+
+        private string GetDescription(PropertyInfo property)
+        {
+            return property.GetCustomAttribute<DescriptionAttribute>()?.Description;
         }
 
         private string GetCategory(PropertyInfo property)
@@ -59,7 +79,7 @@ namespace Bismuth.Wpf.Controls
             return type.IsValueType ? Activator.CreateInstance(type) : null;
         }
 
-        private PropertyItem CreateItem(PropertyInfo property, object obj, string category, object defaultValue)
+        private PropertyItem CreateItem(PropertyInfo property, object obj)
         {
             // Retrieving the PropertyDescriptor to get the IsReadOnly flag.
             // The PropertyInfo.CanWrite is not always false on read only properties.
@@ -72,8 +92,11 @@ namespace Bismuth.Wpf.Controls
                 name: property.Name,
                 type: property.PropertyType,
                 isReadOnly: pd.IsReadOnly,
-                category: category,
-                defaultValue: defaultValue
+                isAdvanced: IsAdvanced(property),
+                category: GetCategory(property),
+                displayName: GetDisplayName(property),
+                description: GetDescription(property),
+                defaultValue: GetDefaultValue(property)
             );
 
             var binding = new Binding(property.Name)
