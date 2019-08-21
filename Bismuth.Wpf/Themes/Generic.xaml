@@ -4,6 +4,7 @@
         <ResourceDictionary Source="/Bismuth.Wpf;component/Themes/Styles/BorderlessWindow.xaml" />
         <ResourceDictionary Source="/Bismuth.Wpf;component/Themes/Styles/DragDropScope.xaml" />
         <ResourceDictionary Source="/Bismuth.Wpf;component/Themes/Styles/DragDropTreeView.xaml" />
+        <ResourceDictionary Source="/Bismuth.Wpf;component/Themes/Styles/PropertyInspector.xaml" />
         <ResourceDictionary Source="/Bismuth.Wpf;component/Themes/Styles/TabControl.xaml" />
     </ResourceDictionary.MergedDictionaries>
 

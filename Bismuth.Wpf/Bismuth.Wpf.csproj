@@ -65,6 +65,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Themes\Styles\PropertyInspector.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Themes\Styles\TabControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -81,6 +85,10 @@
     <Compile Include="Controls\DropTarget.cs" />
     <Compile Include="Controls\MultiSelectTreeView.cs" />
     <Compile Include="Controls\MultiSelectTreeViewItem.cs" />
+    <Compile Include="Controls\PropertyInspector\PropertyInspector.cs" />
+    <Compile Include="Controls\PropertyInspector\PropertyItem.cs" />
+    <Compile Include="Controls\PropertyInspector\PropertyItemGenerator.cs" />
+    <Compile Include="Controls\PropertyInspector\PropertyItemGroup.cs" />
     <Compile Include="Controls\SqueezePanel.cs" />
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\DepthToIndentConverter.cs" />
