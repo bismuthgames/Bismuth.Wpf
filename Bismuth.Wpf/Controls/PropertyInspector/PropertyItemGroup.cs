@@ -1,11 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 
 namespace Bismuth.Wpf.Controls
 {
     public class PropertyItemGroup : DependencyObject
     {
+        private readonly List<PropertyItem> _items = new List<PropertyItem>();
+
         public PropertyItemGroup(string name, Type type)
         {
             Name = name ?? throw new ArgumentNullException(nameof(name));
@@ -122,6 +126,59 @@ namespace Bismuth.Wpf.Controls
         private void OnValueChanged()
         {
 
+        }
+
+        internal void Add(PropertyItem item)
+        {
+            if (item.Group != null) throw new ArgumentException("PropertyItem is already member of another group.", nameof(item));
+            item.Group = this;
+            _items.Add(item);
+
+            Update();
+        }
+
+        internal void Remove(PropertyItem item)
+        {
+            if (item.Group != this) throw new ArgumentException("PropertyItem is not member of this group.", nameof(item));
+            item.Group = null;
+            _items.Remove(item);
+
+            Update();
+        }
+
+        private void Update()
+        {
+            IsReadOnly = GetSharedOrDefault(i => i.IsReadOnly, true);
+            IsAdvanced = GetSharedOrDefault(i => i.IsAdvanced, false);
+            Category = GetSharedOrDefault(i => i.Category, "Common");
+            DisplayName = GetSharedOrDefault(i => i.DisplayName, Name);
+            Description = GetSharedOrDefault(i => i.Description);
+            DefaultValue = GetSharedOrDefault(i => i.DefaultValue);
+            SourceTypeNames = GetSourceTypeNames();
+            ConcreteType = GetSharedOrDefault(i => i.ConcreteType);
+            Value = GetSharedOrDefault(i => i.Value);
+
+            Items = Array.AsReadOnly(_items.ToArray());
+            Values = Array.AsReadOnly(_items.Select(i => i.Value).ToArray());
+        }
+
+        private string GetSourceTypeNames()
+        {
+            return string.Join(", ", _items.Select(i => i.Source.GetType().Name).Distinct().OrderBy(i => i));
+        }
+
+        private T GetSharedOrDefault<T>(Func<PropertyItem, T> propertySelector, T defaultValue = default(T))
+        {
+            if (_items.Count == 0) return defaultValue;
+
+            var value = propertySelector(_items[0]);
+            for (int i = 1; i < _items.Count; i++)
+            {
+                var otherValue = propertySelector(_items[i]);
+                if (!EqualityComparer<T>.Default.Equals(value, otherValue)) return defaultValue;
+            }
+
+            return value;
         }
     }
 }

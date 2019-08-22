@@ -18,14 +18,36 @@ namespace Bismuth.Wpf.Controls
         private readonly ObservableCollection<PropertyItemGroup> _items = new ObservableCollection<PropertyItemGroup>();
         public ReadOnlyObservableCollection<PropertyItemGroup> Items { get; }
 
-        public void Add(object obj)
+        internal void Add(object obj)
         {
-
+            foreach (var item in CreateItems(obj))
+                GetOrCreateGroup(item.Name, item.Type).Add(item);
         }
 
-        public void Remove(object obj)
+        internal void Remove(object obj)
         {
+            var items = _items
+                .SelectMany(g => g.Items)
+                .Where(i => i.Source == obj)
+                .ToArray();
 
+            foreach (var item in items)
+            {
+                item.Group.Remove(item);
+                if (item.Group.Items.Count == 0)
+                    _items.Remove(item.Group);
+            }
+        }
+
+        private PropertyItemGroup GetOrCreateGroup(string name, Type type)
+        {
+            var group = _items.FirstOrDefault(g => g.Name == name && g.Type == type);
+            if (group == null)
+            {
+                group = new PropertyItemGroup(name, type);
+                _items.Add(group);
+            }
+            return group;
         }
 
         private IEnumerable<PropertyItem> CreateItems(object obj)
