@@ -35,7 +35,8 @@ namespace Bismuth.Wpf.Controls
             set { SetValue(ConcreteTypeProperty, value); }
         }
 
-        public static readonly DependencyProperty ConcreteTypeProperty = DependencyProperty.Register(nameof(ConcreteType), typeof(Type), typeof(PropertyItem), new PropertyMetadata(null));
+        public static readonly DependencyProperty ConcreteTypeProperty = DependencyProperty.Register(nameof(ConcreteType), typeof(Type), typeof(PropertyItem),
+            new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, (d, e) => ((PropertyItem)d).OnConcreteTypeChanged()));
 
         public object Value
         {
@@ -43,6 +44,17 @@ namespace Bismuth.Wpf.Controls
             set { SetValue(ValueProperty, value); }
         }
 
-        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(nameof(Value), typeof(object), typeof(PropertyItem), new PropertyMetadata(null));
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(nameof(Value), typeof(object), typeof(PropertyItem),
+            new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, (d, e) => ((PropertyItem)d).OnValueChanged()));
+
+        private void OnConcreteTypeChanged()
+        {
+
+        }
+
+        private void OnValueChanged()
+        {
+
+        }
     }
 }

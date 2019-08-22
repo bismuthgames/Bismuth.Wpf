@@ -58,28 +58,26 @@ namespace Bismuth.Wpf.Controls
 
         public static readonly DependencyProperty SelectedItemsProperty =
             DependencyProperty.Register(nameof(SelectedItems), typeof(IList), typeof(MultiSelectTreeView),
-                new PropertyMetadata(DefaultValueFactory.CreateObservableCollection<object>(), OnSelectedItemsChanged));
+                new PropertyMetadata(DefaultValueFactory.CreateObservableCollection<object>(), (d, e) => ((MultiSelectTreeView)d).OnSelectedItemsChanged(e)));
 
-        private static void OnSelectedItemsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private void OnSelectedItemsChanged(DependencyPropertyChangedEventArgs e)
         {
-            var treeView = (MultiSelectTreeView)d;
-
-            treeView._suppressCollectionChanged = true;
+            _suppressCollectionChanged = true;
 
             if (e.OldValue is INotifyCollectionChanged oldObservableList)
-                oldObservableList.CollectionChanged -= treeView.CollectionChanged;
+                oldObservableList.CollectionChanged -= CollectionChanged;
 
-            treeView.UnselectAll();
+            UnselectAll();
 
             if (e.NewValue is IList newList)
-                treeView.SetIsSelected(newList, true);
+                SetIsSelected(newList, true);
 
-            treeView.EnsurePrimarySelectedContainer();
+            EnsurePrimarySelectedContainer();
 
             if (e.NewValue is INotifyCollectionChanged newObservableList)
-                newObservableList.CollectionChanged += treeView.CollectionChanged;
+                newObservableList.CollectionChanged += CollectionChanged;
 
-            treeView._suppressCollectionChanged = false;
+            _suppressCollectionChanged = false;
         }
 
         private void CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
