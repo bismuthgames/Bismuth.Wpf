@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -18,6 +19,21 @@ namespace Bismuth.Wpf.Controls
         private readonly ObservableCollection<PropertyItemGroup> _items = new ObservableCollection<PropertyItemGroup>();
         public ReadOnlyObservableCollection<PropertyItemGroup> Items { get; }
 
+        internal void AddRange(IEnumerable objects)
+        {
+            foreach (var obj in objects) Add(obj);
+        }
+
+        internal void RemoveRange(IEnumerable objects)
+        {
+            foreach (var obj in objects) Remove(obj);
+        }
+
+        internal void Clear()
+        {
+            _items.Clear();
+        }
+
         internal void Add(object obj)
         {
             foreach (var item in CreateItems(obj))
@@ -33,9 +49,11 @@ namespace Bismuth.Wpf.Controls
 
             foreach (var item in items)
             {
-                item.Group.Remove(item);
-                if (item.Group.Items.Count == 0)
-                    _items.Remove(item.Group);
+                var group = item.Group;
+
+                group.Remove(item);
+                if (group.Items.Count == 0)
+                    _items.Remove(group);
             }
         }
 
