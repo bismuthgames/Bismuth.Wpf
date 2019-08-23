@@ -7,5 +7,6 @@ namespace Bismuth.Wpf.Demo.ViewModels
         public MultiSelectTreeViewDemoViewModel MultiSelectTreeViewDemo { get; } = new MultiSelectTreeViewDemoViewModel();
         public DragDropDemoViewModel DragDropDemo { get; } = new DragDropDemoViewModel();
         public DragDropTreeViewDemoViewModel DragDropTreeViewDemo { get; } = new DragDropTreeViewDemoViewModel();
+        public PropertyInspectorDemoViewModel PropertyInspectorDemo { get; } = new PropertyInspectorDemoViewModel();
     }
 }

@@ -55,6 +55,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Domain\Pet.cs" />
     <Compile Include="ViewModels\DragDropDemoViewModel.cs" />
     <Compile Include="ViewModels\DragDropItemViewModel.cs" />
     <Compile Include="ViewModels\DragDropNodeViewModel.cs" />
@@ -63,6 +64,7 @@
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\MultiSelectTreeViewDemoViewModel.cs" />
     <Compile Include="ViewModels\NodeViewModel.cs" />
+    <Compile Include="ViewModels\PropertyInspectorDemoViewModel.cs" />
     <Compile Include="Views\DragDropDemoView.xaml.cs">
       <DependentUpon>DragDropDemoView.xaml</DependentUpon>
     </Compile>
@@ -71,6 +73,9 @@
     </Compile>
     <Compile Include="Views\MultiSelectTreeViewDemoView.xaml.cs">
       <DependentUpon>MultiSelectTreeViewDemoView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PropertyInspectorDemoView.xaml.cs">
+      <DependentUpon>PropertyInspectorDemoView.xaml</DependentUpon>
     </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -93,6 +98,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\MultiSelectTreeViewDemoView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PropertyInspectorDemoView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

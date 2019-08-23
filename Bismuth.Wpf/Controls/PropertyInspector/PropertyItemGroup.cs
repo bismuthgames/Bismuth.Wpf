@@ -79,7 +79,7 @@ namespace Bismuth.Wpf.Controls
             private set { SetValue(_sourceTypeNamesPropertyKey, value); }
         }
 
-        private static readonly DependencyPropertyKey _sourceTypeNamesPropertyKey = DependencyProperty.RegisterReadOnly(nameof(SourceTypeNames), typeof(string), typeof(PropertyItemGroup), new PropertyMetadata(0));
+        private static readonly DependencyPropertyKey _sourceTypeNamesPropertyKey = DependencyProperty.RegisterReadOnly(nameof(SourceTypeNames), typeof(string), typeof(PropertyItemGroup), new PropertyMetadata());
         public static readonly DependencyProperty SourceTypeNamesProperty = _sourceTypeNamesPropertyKey.DependencyProperty;
 
         public ReadOnlyCollection<PropertyItem> Items

@@ -35,8 +35,11 @@
             <TabItem Header="DragDrop">
                 <v:DragDropDemoView DataContext="{Binding DragDropDemo}" />
             </TabItem>
-            <TabItem Header="DragDropTreeView" IsSelected="True">
+            <TabItem Header="DragDropTreeView">
                 <v:DragDropTreeViewDemoView DataContext="{Binding DragDropTreeViewDemo}" />
+            </TabItem>
+            <TabItem Header="PropertyInspector" IsSelected="True">
+                <v:PropertyInspectorDemoView DataContext="{Binding PropertyInspectorDemo}" />
             </TabItem>
         </TabControl>
     </Border>
