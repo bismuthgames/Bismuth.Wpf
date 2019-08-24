@@ -28,7 +28,8 @@ namespace Bismuth.Wpf.Controls
             set { SetValue(EditorTemplateSelectorProperty, value); }
         }
 
-        public static readonly DependencyProperty EditorTemplateSelectorProperty = DependencyProperty.Register(nameof(EditorTemplateSelector), typeof(DataTemplateSelector), typeof(PropertyInspector));
+        public static readonly DependencyProperty EditorTemplateSelectorProperty = DependencyProperty.Register(nameof(EditorTemplateSelector), typeof(DataTemplateSelector), typeof(PropertyInspector),
+            new PropertyMetadata(new PropertyEditorTemplateSelector()));
 
         public PropertyInspectorArrangeMode ArrangeMode
         {
