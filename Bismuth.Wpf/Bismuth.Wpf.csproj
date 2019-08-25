@@ -87,6 +87,7 @@
     <Compile Include="Controls\MultiSelectTreeViewItem.cs" />
     <Compile Include="Controls\PropertyInspector\PropertyEditor.cs" />
     <Compile Include="Controls\PropertyInspector\PropertyEditorTemplateSelector.cs" />
+    <Compile Include="Controls\PropertyInspector\PropertyGroupStyleSelector.cs" />
     <Compile Include="Controls\PropertyInspector\PropertyInspector.cs" />
     <Compile Include="Controls\PropertyInspector\PropertyItem.cs" />
     <Compile Include="Controls\PropertyInspector\PropertyItemGenerator.cs" />
