@@ -6,6 +6,7 @@
         <ResourceDictionary Source="/Bismuth.Wpf;component/Themes/Styles/DragDropTreeView.xaml" />
         <ResourceDictionary Source="/Bismuth.Wpf;component/Themes/Styles/PropertyInspector.xaml" />
         <ResourceDictionary Source="/Bismuth.Wpf;component/Themes/Styles/TabControl.xaml" />
+        <ResourceDictionary Source="/Bismuth.Wpf;component/Themes/Styles/TextBox.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
 </ResourceDictionary>

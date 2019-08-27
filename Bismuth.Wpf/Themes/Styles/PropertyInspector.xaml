@@ -206,6 +206,7 @@
     </Style>
 
     <Style TargetType="{x:Type controls:PropertyEditor}">
+        <Setter Property="MinHeight" Value="25" />
         <Setter Property="Foreground" Value="#FFF" />
         <Setter Property="Template">
             <Setter.Value>
@@ -219,9 +220,14 @@
                                 <ColumnDefinition />
                             </Grid.ColumnDefinitions>
                             <TextBlock Text="{TemplateBinding Header}" TextTrimming="CharacterEllipsis" Margin="0,2" />
-                            <ContentPresenter Grid.Column="1"
-                                              Content="{TemplateBinding ValueEditor}"
-                                              ContentTemplateSelector="{TemplateBinding ValueEditorTemplateSelector}" />
+                            <DockPanel Grid.Column="1">
+                                <Rectangle Name="DefaultValueIndicator" DockPanel.Dock="Right"
+                                           Width="7" Height="7" Margin="1" VerticalAlignment="Center"
+                                           Stroke="#888" StrokeThickness="1" />
+                                <ContentPresenter Margin="2"
+                                                  Content="{TemplateBinding ValueEditor}"
+                                                  ContentTemplateSelector="{TemplateBinding ValueEditorTemplateSelector}" />
+                            </DockPanel>
                         </Grid>
                     </Border>
                 </ControlTemplate>
