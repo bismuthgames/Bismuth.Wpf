@@ -100,6 +100,7 @@
     <Compile Include="Controls\SqueezePanel.cs" />
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\DepthToIndentConverter.cs" />
+    <Compile Include="Converters\EqualityConverter.cs" />
     <Compile Include="Converters\IsLastItemConverter.cs" />
     <Compile Include="Converters\IsPreviousItemSelectedConverter.cs" />
     <Compile Include="Extensions\LogicalTree.cs" />
