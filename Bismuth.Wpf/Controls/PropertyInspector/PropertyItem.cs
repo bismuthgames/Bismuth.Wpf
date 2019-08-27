@@ -5,6 +5,8 @@ namespace Bismuth.Wpf.Controls
 {
     public class PropertyItem : DependencyObject
     {
+        private bool _suppressOnChanged = false;
+
         public PropertyItem(object source, string name, Type type, bool isReadOnly, bool isAdvanced, string category, string displayName, string description, object defaultValue)
         {
             Source = source ?? throw new ArgumentNullException(nameof(source));
@@ -49,12 +51,30 @@ namespace Bismuth.Wpf.Controls
 
         private void OnConcreteTypeChanged()
         {
+            if (_suppressOnChanged) return;
 
+            _suppressOnChanged = true;
+            Value = CreateValue();
+            _suppressOnChanged = false;
+
+            Group?.Update();
         }
 
         private void OnValueChanged()
         {
+            if (_suppressOnChanged) return;
 
+            _suppressOnChanged = true;
+            ConcreteType = Value?.GetType();
+            _suppressOnChanged = false;
+
+            Group?.Update();
+        }
+
+        private object CreateValue()
+        {
+            if (ConcreteType == null) return null;
+            return Activator.CreateInstance(ConcreteType);
         }
     }
 }

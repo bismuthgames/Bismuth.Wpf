@@ -9,6 +9,8 @@ namespace Bismuth.Wpf.Controls
     public class PropertyItemGroup : DependencyObject
     {
         private readonly List<PropertyItem> _items = new List<PropertyItem>();
+        private bool _suppressOnChanged = false;
+        private bool _suppressUpdate = false;
 
         public PropertyItemGroup(string name, Type type)
         {
@@ -120,12 +122,30 @@ namespace Bismuth.Wpf.Controls
 
         private void OnConcreteTypeChanged()
         {
+            if (_suppressOnChanged) return;
 
+            _suppressUpdate = true;
+
+            foreach (var item in _items)
+                item.ConcreteType = ConcreteType;
+
+            _suppressUpdate = false;
+
+            Update();
         }
 
         private void OnValueChanged()
         {
+            if (_suppressOnChanged) return;
 
+            _suppressUpdate = true;
+
+            foreach (var item in _items)
+                item.Value = Value;
+
+            _suppressUpdate = false;
+
+            Update();
         }
 
         internal void Add(PropertyItem item)
@@ -146,8 +166,17 @@ namespace Bismuth.Wpf.Controls
             Update();
         }
 
-        private void Update()
+        internal void Update()
         {
+            if (_suppressUpdate) return;
+
+            _suppressOnChanged = true;
+
+            ConcreteType = GetSharedOrDefault(i => i.ConcreteType);
+            Value = GetSharedOrDefault(i => i.Value);
+
+            _suppressOnChanged = false;
+
             IsReadOnly = GetSharedOrDefault(i => i.IsReadOnly, true);
             IsAdvanced = GetSharedOrDefault(i => i.IsAdvanced, false);
             Category = GetSharedOrDefault(i => i.Category, "Common");
@@ -155,8 +184,6 @@ namespace Bismuth.Wpf.Controls
             Description = GetSharedOrDefault(i => i.Description);
             DefaultValue = GetSharedOrDefault(i => i.DefaultValue);
             SourceTypeNames = GetSourceTypeNames();
-            ConcreteType = GetSharedOrDefault(i => i.ConcreteType);
-            Value = GetSharedOrDefault(i => i.Value);
 
             Items = Array.AsReadOnly(_items.ToArray());
             Values = Array.AsReadOnly(_items.Select(i => i.Value).ToArray());
