@@ -4,6 +4,7 @@
                     xmlns:converters="clr-namespace:Bismuth.Wpf.Converters"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
+    <converters:EnumToValuesConverter x:Key="EnumToValues" />
     <converters:EqualityConverter x:Key="EqualityConverter" />
 
     <Style x:Key="CategoryToggleButtonStyle" TargetType="{x:Type ToggleButton}">
@@ -159,23 +160,27 @@
         </Setter>
     </Style>
 
+    <ResourceDictionary x:Key="ValueEditorTemplates">
+        <DataTemplate DataType="{x:Type sys:String}">
+            <TextBox Text="{Binding Value}" />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type sys:Int32}">
+            <TextBox Text="{Binding Value}" />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type sys:Boolean}">
+            <CheckBox IsChecked="{Binding Value}" />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type sys:Enum}">
+            <ComboBox ItemsSource="{Binding ConcreteType, Converter={StaticResource EnumToValues}}"
+                      SelectedItem="{Binding Value}" />
+        </DataTemplate>
+    </ResourceDictionary>
+
     <DataTemplate x:Key="DefaultPropertyEditor">
         <controls:PropertyEditor Header="{Binding DisplayName}"
                                  ValueEditor="{Binding}"
                                  Value="{Binding Value}"
-                                 DefaultValue="{Binding DefaultValue}">
-            <controls:PropertyEditor.Resources>
-                <DataTemplate DataType="{x:Type sys:String}">
-                    <TextBox Text="{Binding Value}" />
-                </DataTemplate>
-                <DataTemplate DataType="{x:Type sys:Int32}">
-                    <TextBox Text="{Binding Value}" />
-                </DataTemplate>
-                <DataTemplate DataType="{x:Type sys:Boolean}">
-                    <CheckBox IsChecked="{Binding Value}" />
-                </DataTemplate>
-            </controls:PropertyEditor.Resources>
-        </controls:PropertyEditor>
+                                 DefaultValue="{Binding DefaultValue}" />
     </DataTemplate>
 
     <Style TargetType="{x:Type controls:PropertyInspector}">
@@ -211,6 +216,11 @@
     <Style TargetType="{x:Type controls:PropertyEditor}">
         <Setter Property="MinHeight" Value="25" />
         <Setter Property="Foreground" Value="#FFF" />
+        <Setter Property="ValueEditorTemplateSelector">
+            <Setter.Value>
+                <controls:PropertyValueEditorTemplateSelector ValueEditorTemplates="{StaticResource ValueEditorTemplates}" />
+            </Setter.Value>
+        </Setter>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type controls:PropertyEditor}">
