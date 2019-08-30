@@ -65,6 +65,9 @@
     <Compile Include="ViewModels\MultiSelectTreeViewDemoViewModel.cs" />
     <Compile Include="ViewModels\NodeViewModel.cs" />
     <Compile Include="ViewModels\PropertyInspectorDemoViewModel.cs" />
+    <Compile Include="Views\ControlsDemoView.xaml.cs">
+      <DependentUpon>ControlsDemoView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\DragDropDemoView.xaml.cs">
       <DependentUpon>DragDropDemoView.xaml</DependentUpon>
     </Compile>
@@ -89,6 +92,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Views\ControlsDemoView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\DragDropDemoView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

@@ -29,6 +29,9 @@
                     <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" />
                 </Grid>
             </TabItem>
+            <TabItem Header="Controls" IsSelected="True">
+                <v:ControlsDemoView />
+            </TabItem>
             <TabItem Header="MultiSelectTreeView">
                 <v:MultiSelectTreeViewDemoView DataContext="{Binding MultiSelectTreeViewDemo}" />
             </TabItem>
@@ -38,7 +41,7 @@
             <TabItem Header="DragDropTreeView">
                 <v:DragDropTreeViewDemoView DataContext="{Binding DragDropTreeViewDemo}" />
             </TabItem>
-            <TabItem Header="PropertyInspector" IsSelected="True">
+            <TabItem Header="PropertyInspector">
                 <v:PropertyInspectorDemoView DataContext="{Binding PropertyInspectorDemo}" />
             </TabItem>
         </TabControl>
