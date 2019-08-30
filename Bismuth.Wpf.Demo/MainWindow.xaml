@@ -9,7 +9,7 @@
                            mc:Ignorable="d"
                            d:DataContext="{d:DesignInstance vm:MainViewModel, IsDesignTimeCreatable=False}"
                            Title="Bismuth WPF Demo" Height="450" Width="800" UseLayoutRounding="True">
-    <Border Background="CornflowerBlue" Padding="10">
+    <Border Padding="10">
         <TabControl>
             <TabItem Header="SqueezePanel">
                 <Grid>
