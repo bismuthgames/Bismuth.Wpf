@@ -139,13 +139,13 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type controls:DropTarget}">
-                    <controls:AdornerInserter x:Name="Border" Visibility="Hidden">
+                    <controls:AdornerPlaceholder x:Name="Border" Visibility="Hidden">
                         <Grid SnapsToDevicePixels="True">
                             <Path Data="M0,0L 4.5,4.5 0,9z" Fill="{DynamicResource DragDropTreeViewItem.DropTarget.Brush}" VerticalAlignment="Center" HorizontalAlignment="Left" />
                             <Path Data="M0,0L-4.5,4.5 0,9z" Fill="{DynamicResource DragDropTreeViewItem.DropTarget.Brush}" VerticalAlignment="Center" HorizontalAlignment="Right" />
                             <Rectangle Fill="{DynamicResource DragDropTreeViewItem.DropTarget.Brush}" Height="1" VerticalAlignment="Center" />
                         </Grid>
-                    </controls:AdornerInserter>
+                    </controls:AdornerPlaceholder>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsCurrentTarget" Value="True">
                             <Setter TargetName="Border" Property="Visibility" Value="Visible" />

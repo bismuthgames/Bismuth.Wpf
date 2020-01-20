@@ -6,7 +6,7 @@ using System.Windows.Media;
 
 namespace Bismuth.Wpf.Controls
 {
-    public class AdornerInserter : Decorator
+    public class AdornerPlaceholder : Decorator
     {
         private class UIElementAdorner : Adorner
         {
@@ -43,12 +43,12 @@ namespace Bismuth.Wpf.Controls
         private AdornerLayer _adornerLayer;
         private UIElementAdorner _adorner;
 
-        public AdornerInserter()
+        public AdornerPlaceholder()
         {
-            IsVisibleChanged += AdornerInserter_IsVisibleChanged;
+            IsVisibleChanged += AdornerPlaceholder_IsVisibleChanged;
         }
 
-        private void AdornerInserter_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        private void AdornerPlaceholder_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             if (IsVisible)
                 AddAdorner();
