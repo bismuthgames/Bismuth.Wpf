@@ -29,6 +29,11 @@
                 </Setter>
             </Style>
         </controls:DragDropTreeView.ItemContainerStyle>
+        <controls:DragDropTreeView.ItemDragTemplate>
+            <DataTemplate>
+                <ItemsControl ItemsSource="{Binding}" />
+            </DataTemplate>
+        </controls:DragDropTreeView.ItemDragTemplate>
         <controls:DragDropTreeView.Resources>
             <HierarchicalDataTemplate DataType="{x:Type vm:DragDropNodeViewModel}" ItemsSource="{Binding Children}">
                 <Border Height="22">

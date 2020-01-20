@@ -100,10 +100,10 @@ namespace Bismuth.Wpf.Controls
 
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
         {
+            base.OnMouseLeftButtonDown(e);
+
             if (IsDraggable)
                 this.FindVisualParent<DragDropScope>()?.BeginDrag(ParentTreeView.SelectedItems.OfType<object>().ToArray());
-
-            base.OnMouseLeftButtonDown(e);
         }
 
         protected override DependencyObject GetContainerForItemOverride()

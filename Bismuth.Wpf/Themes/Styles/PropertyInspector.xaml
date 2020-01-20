@@ -230,7 +230,7 @@
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition />
-                                <ColumnDefinition />
+                                <ColumnDefinition Width="2*" />
                             </Grid.ColumnDefinitions>
                             <TextBlock Text="{TemplateBinding Header}" TextTrimming="CharacterEllipsis" Margin="0,2" />
                             <DockPanel Grid.Column="1">
