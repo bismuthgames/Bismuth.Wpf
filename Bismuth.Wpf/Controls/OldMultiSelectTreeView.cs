@@ -10,7 +10,7 @@ using Bismuth.Wpf.Helpers;
 
 namespace Bismuth.Wpf.Controls
 {
-    public class MultiSelectTreeView : TreeView
+    public class OldMultiSelectTreeView : TreeView
     {
         private static readonly PropertyInfo _isSelectionChangeActiveProperty =
             typeof(TreeView).GetProperty("IsSelectionChangeActive", BindingFlags.Instance | BindingFlags.NonPublic);
@@ -24,19 +24,19 @@ namespace Bismuth.Wpf.Controls
             set { _isSelectionChangeActiveProperty.SetValue(this, value); }
         }
 
-        internal MultiSelectTreeViewItem PrimarySelectedContainer
+        internal OldMultiSelectTreeViewItem PrimarySelectedContainer
         {
-            get { return _selectedContainerProperty.GetValue(this) as MultiSelectTreeViewItem; }
+            get { return _selectedContainerProperty.GetValue(this) as OldMultiSelectTreeViewItem; }
         }
 
         protected override DependencyObject GetContainerForItemOverride()
         {
-            return new MultiSelectTreeViewItem();
+            return new OldMultiSelectTreeViewItem();
         }
 
         protected override bool IsItemItsOwnContainerOverride(object item)
         {
-            return item is MultiSelectTreeViewItem;
+            return item is OldMultiSelectTreeViewItem;
         }
 
         protected override void OnItemsChanged(NotifyCollectionChangedEventArgs e)
@@ -57,8 +57,8 @@ namespace Bismuth.Wpf.Controls
         }
 
         public static readonly DependencyProperty SelectedItemsProperty =
-            DependencyProperty.Register(nameof(SelectedItems), typeof(IList), typeof(MultiSelectTreeView),
-                new PropertyMetadata(DefaultValueFactory.CreateObservableCollection<object>(), (d, e) => ((MultiSelectTreeView)d).OnSelectedItemsChanged(e)));
+            DependencyProperty.Register(nameof(SelectedItems), typeof(IList), typeof(OldMultiSelectTreeView),
+                new PropertyMetadata(DefaultValueFactory.CreateObservableCollection<object>(), (d, e) => ((OldMultiSelectTreeView)d).OnSelectedItemsChanged(e)));
 
         private void OnSelectedItemsChanged(DependencyPropertyChangedEventArgs e)
         {
@@ -187,9 +187,9 @@ namespace Bismuth.Wpf.Controls
                 i.IsSelected = false;
         }
 
-        internal MultiSelectTreeViewItem SecondarySelectedContainer { get; set; }
+        internal OldMultiSelectTreeViewItem SecondarySelectedContainer { get; set; }
 
-        internal void MultiSelect(MultiSelectTreeViewItem container)
+        internal void MultiSelect(OldMultiSelectTreeViewItem container)
         {
             var primarySelectedContainer = PrimarySelectedContainer;
 
@@ -226,7 +226,7 @@ namespace Bismuth.Wpf.Controls
             }
         }
 
-        internal void MultiSelectRange(MultiSelectTreeViewItem container)
+        internal void MultiSelectRange(OldMultiSelectTreeViewItem container)
         {
             SecondarySelectedContainer = container;
 
@@ -238,7 +238,7 @@ namespace Bismuth.Wpf.Controls
             IsSelectionChangeActive = false;
         }
 
-        private void MultiSelectRange(MultiSelectTreeViewItem a, MultiSelectTreeViewItem b)
+        private void MultiSelectRange(OldMultiSelectTreeViewItem a, OldMultiSelectTreeViewItem b)
         {
             bool isBetween = false;
 
@@ -262,25 +262,25 @@ namespace Bismuth.Wpf.Controls
         private void SelectFirst()
         {
             if (ItemContainerGenerator.Items.Count > 0 &&
-                ItemContainerGenerator.ContainerFromIndex(0) is MultiSelectTreeViewItem treeViewItem)
+                ItemContainerGenerator.ContainerFromIndex(0) is OldMultiSelectTreeViewItem treeViewItem)
                 treeViewItem.IsSelected = true;
         }
 
-        internal IEnumerable<MultiSelectTreeViewItem> EnumerateTreeViewItems()
+        internal IEnumerable<OldMultiSelectTreeViewItem> EnumerateTreeViewItems()
         {
             return EnumerateTreeViewItems(ItemContainerGenerator, _ => true);
         }
 
-        internal IEnumerable<MultiSelectTreeViewItem> EnumerateTreeViewItems(Func<MultiSelectTreeViewItem, bool> includeChildren)
+        internal IEnumerable<OldMultiSelectTreeViewItem> EnumerateTreeViewItems(Func<OldMultiSelectTreeViewItem, bool> includeChildren)
         {
             return EnumerateTreeViewItems(ItemContainerGenerator, includeChildren);
         }
 
-        private IEnumerable<MultiSelectTreeViewItem> EnumerateTreeViewItems(ItemContainerGenerator generator, Func<MultiSelectTreeViewItem, bool> includeChildren)
+        private IEnumerable<OldMultiSelectTreeViewItem> EnumerateTreeViewItems(ItemContainerGenerator generator, Func<OldMultiSelectTreeViewItem, bool> includeChildren)
         {
             for (int i = 0; i < generator.Items.Count; i++)
             {
-                if (generator.ContainerFromIndex(i) is MultiSelectTreeViewItem treeViewItem)
+                if (generator.ContainerFromIndex(i) is OldMultiSelectTreeViewItem treeViewItem)
                 {
                     yield return treeViewItem;
 

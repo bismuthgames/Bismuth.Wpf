@@ -8,7 +8,7 @@ using System.Windows.Input;
 
 namespace Bismuth.Wpf.Controls
 {
-    public class MultiSelectTreeViewItem : TreeViewItem
+    public class OldMultiSelectTreeViewItem : TreeViewItem
     {
         private static readonly MethodInfo _selectMethod =
             typeof(TreeViewItem).GetMethod("Select", BindingFlags.Instance | BindingFlags.NonPublic);
@@ -26,12 +26,12 @@ namespace Bismuth.Wpf.Controls
 
         protected override DependencyObject GetContainerForItemOverride()
         {
-            return new MultiSelectTreeViewItem();
+            return new OldMultiSelectTreeViewItem();
         }
 
         protected override bool IsItemItsOwnContainerOverride(object item)
         {
-            return item is MultiSelectTreeViewItem;
+            return item is OldMultiSelectTreeViewItem;
         }
 
         protected override void OnItemsChanged(NotifyCollectionChangedEventArgs e)
@@ -69,7 +69,7 @@ namespace Bismuth.Wpf.Controls
         {
             for (int i = 0; i < ItemContainerGenerator.Items.Count; i++)
             {
-                if (ItemContainerGenerator.ContainerFromIndex(i) is MultiSelectTreeViewItem treeViewItem)
+                if (ItemContainerGenerator.ContainerFromIndex(i) is OldMultiSelectTreeViewItem treeViewItem)
                 {
                     treeViewItem.IsSelected = false;
                     treeViewItem.UnselectRecursive();
@@ -196,14 +196,14 @@ namespace Bismuth.Wpf.Controls
             get { return ItemsControlFromItemContainer(this); }
         }
 
-        internal MultiSelectTreeView ParentTreeView
+        internal OldMultiSelectTreeView ParentTreeView
         {
             get
             {
                 var itemsControl = ParentItemsControl;
                 while (itemsControl != null)
                 {
-                    if (itemsControl is MultiSelectTreeView treeView) return treeView;
+                    if (itemsControl is OldMultiSelectTreeView treeView) return treeView;
 
                     itemsControl = ItemsControlFromItemContainer(itemsControl);
                 }
@@ -212,7 +212,7 @@ namespace Bismuth.Wpf.Controls
             }
         }
 
-        private MultiSelectTreeViewItem GetPrevious()
+        private OldMultiSelectTreeViewItem GetPrevious()
         {
             return ParentTreeView
                 .EnumerateTreeViewItems(i => i.IsExpanded)
@@ -220,7 +220,7 @@ namespace Bismuth.Wpf.Controls
                 .LastOrDefault();
         }
 
-        private MultiSelectTreeViewItem GetNext()
+        private OldMultiSelectTreeViewItem GetNext()
         {
             return ParentTreeView
                 .EnumerateTreeViewItems(i => i.IsExpanded)

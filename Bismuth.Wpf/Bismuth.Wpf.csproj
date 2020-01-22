@@ -91,8 +91,8 @@
     <Compile Include="Controls\DragDropTreeViewItem.cs" />
     <Compile Include="Controls\DragSource.cs" />
     <Compile Include="Controls\DropTarget.cs" />
-    <Compile Include="Controls\MultiSelectTreeView.cs" />
-    <Compile Include="Controls\MultiSelectTreeViewItem.cs" />
+    <Compile Include="Controls\OldMultiSelectTreeView.cs" />
+    <Compile Include="Controls\OldMultiSelectTreeViewItem.cs" />
     <Compile Include="Controls\PropertyInspector\PropertyEditor.cs" />
     <Compile Include="Controls\PropertyInspector\PropertyEditorTemplateSelector.cs" />
     <Compile Include="Controls\PropertyInspector\PropertyGroupStyleSelector.cs" />
