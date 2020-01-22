@@ -90,9 +90,9 @@ namespace Bismuth.Wpf.Controls
             }
         }
 
-        private int GetDepth(TreeViewItem item)
+        private int GetDepth(MultiSelectTreeViewItem item)
         {
-            var parent = item.FindVisualParent<TreeViewItem>();
+            var parent = item.FindVisualParent<MultiSelectTreeViewItem>();
             if (parent != null) return GetDepth(parent) + 1;
 
             return 0;
