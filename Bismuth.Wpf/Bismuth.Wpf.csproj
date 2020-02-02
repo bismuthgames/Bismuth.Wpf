@@ -69,6 +69,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Themes\Styles\MultiSelectTreeView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Themes\Styles\PropertyInspector.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -114,6 +118,7 @@
     <Compile Include="Extensions\VisualTree.cs" />
     <Compile Include="Helpers\DefaultValueFactory.cs" />
     <Compile Include="Helpers\MouseHelper.cs" />
+    <Compile Include="Helpers\Supressor.cs" />
     <Compile Include="Helpers\WindowHelper.cs" />
     <Compile Include="Native\DwmApi.cs" />
     <Compile Include="Native\Structs\MARGINS.cs" />
