@@ -131,14 +131,45 @@ namespace Bismuth.Wpf.Controls
                 //    ParentTreeView.MultiSelectRange(ParentTreeView.EnumerateTreeViewItems(i => i.IsExpanded).Last());
                 //}
             }
-            else if (Keyboard.IsKeyDown(Key.Up) ||
-                     Keyboard.IsKeyDown(Key.Down) ||
-                     Keyboard.IsKeyDown(Key.Left) ||
-                     Keyboard.IsKeyDown(Key.Right))
+            else if (Keyboard.IsKeyDown(Key.Up))
             {
                 ParentTreeView.ClearSelectedItems();
-                IsPrimarySelected = true;
+                var prev = GetPrevious();
+                prev.Focus();
+                prev.IsPrimarySelected = true;
+                e.Handled = true;
             }
+            else if (Keyboard.IsKeyDown(Key.Down))
+            {
+                ParentTreeView.ClearSelectedItems();
+                var prev = GetNext();
+                prev.IsPrimarySelected = true;
+                prev.Focus();
+                e.Handled = true;
+            }
+            else if (Keyboard.IsKeyDown(Key.Left))
+            {
+                if (Items.Count > 0 && IsExpanded)
+                {
+                    IsExpanded = false;
+                }
+                else if (ParentItemsControl is MultiSelectTreeViewItem parent)
+                {
+                    ParentTreeView.ClearSelectedItems();
+                    parent.IsPrimarySelected = true;
+                    parent.Focus();
+                }
+                e.Handled = true;
+            }
+            else if (Keyboard.IsKeyDown(Key.Right))
+            {
+                if (Items.Count > 0 && !IsExpanded)
+                {
+                    IsExpanded = true;
+                }
+            }
+
+
 
             base.OnKeyDown(e);
         }
