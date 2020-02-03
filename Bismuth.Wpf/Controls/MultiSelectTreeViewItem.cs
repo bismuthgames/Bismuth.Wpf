@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -8,12 +9,35 @@ using Bismuth.Wpf.Extensions;
 
 namespace Bismuth.Wpf.Controls
 {
-    public class MultiSelectTreeViewItem : HeaderedItemsControl
+    public class MultiSelectTreeViewItem : TreeViewItem
     {
-        public bool IsSelected
+        static MultiSelectTreeViewItem()
         {
-            get { return (bool)GetValue(IsSelectedProperty); }
-            set { SetValue(IsSelectedProperty, value); }
+            var metadata = IsSelectedProperty.GetMetadata(typeof(TreeViewItem));
+
+            var field = typeof(PropertyMetadata)
+                .GetField("_propertyChangedCallback", BindingFlags.Instance | BindingFlags.NonPublic);
+
+            _baseOnIsSelectedChanged = (PropertyChangedCallback)field.GetValue(metadata);
+
+            field.SetValue(metadata, (PropertyChangedCallback)OnIsSelectedChanged);
+        }
+
+        private static readonly PropertyChangedCallback _baseOnIsSelectedChanged;
+
+        private static void OnIsSelectedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is MultiSelectTreeViewItem multiSelectTreeViewItem)// && multiSelectTreeViewItem.ParentTreeView.PrimarySelectedContainer != null)
+            {
+                var prev = multiSelectTreeViewItem.ParentTreeView.IsSelectionChangeActive;
+                multiSelectTreeViewItem.ParentTreeView.IsSelectionChangeActive = true;
+                _baseOnIsSelectedChanged(d, e);
+                multiSelectTreeViewItem.ParentTreeView.IsSelectionChangeActive = prev;
+            }
+            else
+            {
+                _baseOnIsSelectedChanged(d, e);
+            }
         }
 
         public object IsPrimarySelected
@@ -35,22 +59,24 @@ namespace Bismuth.Wpf.Controls
             )
         );
 
+        private static readonly MethodInfo _selectMethod =
+        typeof(TreeViewItem).GetMethod("Select", BindingFlags.Instance | BindingFlags.NonPublic);
 
-        public static readonly DependencyProperty IsSelectedProperty =
-            DependencyProperty.Register(nameof(IsSelected), typeof(bool), typeof(MultiSelectTreeViewItem),
-                new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
-                    (d, e) => ((MultiSelectTreeViewItem)d).OnIsSelectedChanged(e)));
+        private static readonly object[] _trueParameter = new object[] { true };
 
-        public bool IsExpanded
+        internal void MakePrimary()
         {
-            get { return (bool)GetValue(IsExpandedProperty); }
-            set { SetValue(IsExpandedProperty, value); }
-        }
+            var prev = ParentTreeView.IsSelectionChangeActive;
+            ParentTreeView.IsSelectionChangeActive = false;
 
-        public static readonly DependencyProperty IsExpandedProperty =
-            DependencyProperty.Register(nameof(IsExpanded), typeof(bool), typeof(MultiSelectTreeViewItem),
-                new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
-                    (d, e) => ((MultiSelectTreeViewItem)d).OnIsExpandedChanged(e)));
+            if (!IsSelected) throw new InvalidOperationException("Only selected items can be made primary.");
+            // We don't want to trigger selected events when making an item the
+            // primary selected item, since it is already selected.
+            // To avoid this, we call the private 'Select' method on the base class.
+            _selectMethod.Invoke(this, _trueParameter);
+
+            ParentTreeView.IsSelectionChangeActive = prev;
+        }
 
         private void OnIsPrimarySelectedChanged(DependencyPropertyChangedEventArgs e)
         {
@@ -59,36 +85,37 @@ namespace Bismuth.Wpf.Controls
 
             if ((bool)e.NewValue)
             {
-                parentTreeView.PrimarySelectedItem = ItemForContainer;
                 if (!IsSelected) IsSelected = true;
+                MakePrimary();
             }
             else
             {
                 parentTreeView.EnsurePrimarySelectedItem();
-                //parentTreeView.PrimarySelectedItem = null;
             }
         }
 
-        private void OnIsSelectedChanged(DependencyPropertyChangedEventArgs e)
+        protected override void OnSelected(RoutedEventArgs e)
+        {
+            ParentTreeView.SelectItem(ItemForContainer);
+            ParentTreeView.EnsurePrimarySelectedItem();
+            base.OnSelected(e);
+        }
+
+        protected override void OnUnselected(RoutedEventArgs e)
         {
             var parentTreeView = ParentTreeView;
             if (parentTreeView == null) return;
 
-            if ((bool)e.NewValue)
-            {
-                parentTreeView.SelectItem(ItemForContainer);
-            }
-            else
-            {
-                parentTreeView.UnselectItem(ItemForContainer);
-            }
-
+            parentTreeView.UnselectItem(ItemForContainer);
             parentTreeView.EnsurePrimarySelectedItem();
+
+            base.OnUnselected(e);
         }
 
-        private void OnIsExpandedChanged(DependencyPropertyChangedEventArgs e)
+        protected override void OnCollapsed(RoutedEventArgs e)
         {
-            if (!(bool)e.NewValue) UnselectRecursive();
+            UnselectRecursive();
+            base.OnCollapsed(e);
         }
 
         internal void UnselectRecursive()
@@ -136,7 +163,7 @@ namespace Bismuth.Wpf.Controls
                      Keyboard.IsKeyDown(Key.Left) ||
                      Keyboard.IsKeyDown(Key.Right))
             {
-                ParentTreeView.ClearSelectedItems();
+                //ParentTreeView.ClearSelectedItems();
                 IsPrimarySelected = true;
             }
 
@@ -183,11 +210,17 @@ namespace Bismuth.Wpf.Controls
             base.OnMouseLeftButtonUp(e);
         }
 
+        //protected override void OnGotFocus(RoutedEventArgs e)
+        //{
+        //    //e.Handled = true;
+        //    //base.OnGotFocus(e);
+        //}
+
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
         {
             if (!e.Handled && IsEnabled && IsThis(e.OriginalSource))
             {
-                Focus();
+                //Focus();
 
                 if (!IsSelected)
                 {

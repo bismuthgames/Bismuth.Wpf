@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -11,27 +12,36 @@ using Bismuth.Wpf.Helpers;
 
 namespace Bismuth.Wpf.Controls
 {
-    public class MultiSelectTreeView : ItemsControl
+    public class MultiSelectTreeView : TreeView
     {
         protected override DependencyObject GetContainerForItemOverride() => new MultiSelectTreeViewItem();
         protected override bool IsItemItsOwnContainerOverride(object item) => item is MultiSelectTreeViewItem;
 
         internal MultiSelectTreeViewItem PrimarySelectedContainer { get; private set; }
 
+        private static readonly PropertyInfo _isSelectionChangeActiveProperty =
+            typeof(TreeView).GetProperty("IsSelectionChangeActive", BindingFlags.Instance | BindingFlags.NonPublic);
+
+        internal bool IsSelectionChangeActive
+        {
+            get { return (bool)_isSelectionChangeActiveProperty.GetValue(this); }
+            set { _isSelectionChangeActiveProperty.SetValue(this, value); }
+        }
+
         private bool _suppressCollectionChanged;
         private bool _suppressPrimarySelectedItemChanged;
 
-        public object PrimarySelectedItem
-        {
-            get { return GetValue(PrimarySelectedItemProperty); }
-            set { SetValue(PrimarySelectedItemProperty, value); }
-        }
+        //public object PrimarySelectedItem
+        //{
+        //    get { return GetValue(PrimarySelectedItemProperty); }
+        //    set { SetValue(PrimarySelectedItemProperty, value); }
+        //}
 
-        public static readonly DependencyProperty PrimarySelectedItemProperty =
-            DependencyProperty.Register(nameof(PrimarySelectedItem), typeof(object), typeof(MultiSelectTreeView), new PropertyMetadata(null,
-                (d, e) => ((MultiSelectTreeView)d).OnPrimarySelectedItemChanged(e)));
+        //public static readonly DependencyProperty PrimarySelectedItemProperty =
+        //    DependencyProperty.Register(nameof(PrimarySelectedItem), typeof(object), typeof(MultiSelectTreeView), new PropertyMetadata(null,
+        //        (d, e) => ((MultiSelectTreeView)d).OnPrimarySelectedItemChanged(e)));
 
-        private void OnPrimarySelectedItemChanged(DependencyPropertyChangedEventArgs e)
+        protected override void OnSelectedItemChanged(RoutedPropertyChangedEventArgs<object> e)
         {
             if (_suppressPrimarySelectedItemChanged) return;
 
@@ -51,7 +61,31 @@ namespace Bismuth.Wpf.Controls
             {
                 _suppressPrimarySelectedItemChanged = false;
             }
+
+            base.OnSelectedItemChanged(e);
         }
+
+        //private void OnPrimarySelectedItemChanged(DependencyPropertyChangedEventArgs e)
+        //{
+        //    if (_suppressPrimarySelectedItemChanged) return;
+
+        //    try
+        //    {
+        //        _suppressPrimarySelectedItemChanged = true;
+
+        //        if (PrimarySelectedContainer != null)
+        //            PrimarySelectedContainer.IsPrimarySelected = false;
+
+        //        PrimarySelectedContainer = EnumerateContainers().FirstOrDefault(i => i.ItemForContainer == e.NewValue);
+
+        //        if (PrimarySelectedContainer != null)
+        //            PrimarySelectedContainer.IsPrimarySelected = true;
+        //    }
+        //    finally
+        //    {
+        //        _suppressPrimarySelectedItemChanged = false;
+        //    }
+        //}
 
         public IList SelectedItems
         {
@@ -129,10 +163,10 @@ namespace Bismuth.Wpf.Controls
 
         internal void EnsurePrimarySelectedItem()
         {
-            if (SelectedItems != null && PrimarySelectedItem != null &&
-                SelectedItems.Contains(PrimarySelectedItem)) return;
+            if (SelectedItems != null && SelectedItem != null &&
+                SelectedItems.Contains(SelectedItem)) return;
 
-            PrimarySelectedItem = SelectedItems?.Cast<object>()?.FirstOrDefault();
+            EnumerateContainers().FirstOrDefault(i => i.IsSelected)?.MakePrimary();
 
             //if (PrimarySelectedContainer != null &&
             //    PrimarySelectedContainer.ParentTreeView == this &&
@@ -214,7 +248,7 @@ namespace Bismuth.Wpf.Controls
         {
             _suppressCollectionChanged = true;
 
-            PrimarySelectedItem = null;
+            //PrimarySelectedItem = null;
 
             if (SelectedItems != null && !SelectedItems.IsReadOnly && !SelectedItems.IsFixedSize)
                 SelectedItems.Clear();

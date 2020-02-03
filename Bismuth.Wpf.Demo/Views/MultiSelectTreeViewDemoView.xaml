@@ -22,9 +22,9 @@
                 <ColumnDefinition Width="6" />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <controls:DragDropTreeView x:Name="TreeView" ItemsSource="{Binding RootNodes}" SelectedItems="{Binding SelectedNodes}">
-                <controls:DragDropTreeView.ItemContainerStyle>
-                    <Style TargetType="{x:Type controls:DragDropTreeViewItem}" BasedOn="{StaticResource {x:Type controls:DragDropTreeViewItem}}">
+            <controls:MultiSelectTreeView x:Name="TreeView" ItemsSource="{Binding RootNodes}" SelectedItems="{Binding SelectedNodes}">
+                <controls:MultiSelectTreeView.ItemContainerStyle>
+                    <Style TargetType="{x:Type controls:MultiSelectTreeViewItem}" BasedOn="{StaticResource {x:Type TreeViewItem}}">
                         <Setter Property="IsPrimarySelected" Value="{Binding IsPrimarySelected, Mode=TwoWay}" />
                         <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
                         <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
@@ -47,21 +47,21 @@
                             </Trigger>
                         </Style.Triggers>
                     </Style>
-                </controls:DragDropTreeView.ItemContainerStyle>
-                <controls:DragDropTreeView.Resources>
+                </controls:MultiSelectTreeView.ItemContainerStyle>
+                <controls:MultiSelectTreeView.Resources>
                     <HierarchicalDataTemplate DataType="{x:Type vm:NodeViewModel}" ItemsSource="{Binding Children}">
                         <StackPanel Orientation="Horizontal">
-                            <CheckBox IsChecked="{Binding IsSelected}" />
-                            <CheckBox IsChecked="{Binding IsPrimarySelected}" />
+                            <!--<CheckBox IsChecked="{Binding IsSelected}" />
+                            <CheckBox IsChecked="{Binding IsPrimarySelected}" />-->
                             <TextBlock Text="{Binding Name}" />
                         </StackPanel>
                     </HierarchicalDataTemplate>
-                </controls:DragDropTreeView.Resources>
-            </controls:DragDropTreeView>
+                </controls:MultiSelectTreeView.Resources>
+            </controls:MultiSelectTreeView>
             <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" />
             <DockPanel Grid.Column="2">
                 <TextBlock DockPanel.Dock="Top" Text="Primary Selected Item" FontWeight="Bold" />
-                <ContentControl DockPanel.Dock="Top" Content="{Binding PrimarySelectedItem, ElementName=TreeView}" Height="22" />
+                <ContentControl DockPanel.Dock="Top" Content="{Binding SelectedItem, ElementName=TreeView}" Height="22" />
                 <TextBlock DockPanel.Dock="Top" Text="Selected Items" FontWeight="Bold" />
                 <ListBox ItemsSource="{Binding SelectedItems, ElementName=TreeView}" />
             </DockPanel>
