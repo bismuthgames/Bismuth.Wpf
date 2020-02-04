@@ -107,65 +107,58 @@ namespace Bismuth.Wpf.Controls
 
         protected override void OnKeyDown(KeyEventArgs e)
         {
-            //var container = IsShiftKeyDown ? ;
+            var container = IsShiftKeyDown ? ParentTreeView.SecondarySelectedContainer ?? this : this;
 
-            if (IsShiftKeyDown)
+            switch (e.Key)
             {
-                e.Handled = true;
+                case Key.Up:
+                    container.GetPrevious()?.KeyboardSelect();
+                    e.Handled = true;
+                    break;
 
-                if (Keyboard.IsKeyDown(Key.Up))
-                {
-                    ParentTreeView.SecondarySelectedContainer.GetPrevious()?.MultiSelect();
-                }
-                else if (Keyboard.IsKeyDown(Key.Down))
-                {
-                    ParentTreeView.SecondarySelectedContainer.GetNext()?.MultiSelect();
-                }
-                else if (Keyboard.IsKeyDown(Key.PageUp) || Keyboard.IsKeyDown(Key.Home))
-                {
-                    ParentTreeView.EnumerateContainers(i => i.IsExpanded).First()?.MultiSelect();
-                }
-                else if (Keyboard.IsKeyDown(Key.PageDown) || Keyboard.IsKeyDown(Key.End))
-                {
-                    ParentTreeView.EnumerateContainers(i => i.IsExpanded).Last()?.MultiSelect();
-                }
-            }
-            else if (Keyboard.IsKeyDown(Key.Up))
-            {
-                GetPrevious()?.SingleSelectOrFocus();
-                e.Handled = true;
-            }
-            else if (Keyboard.IsKeyDown(Key.Down))
-            {
-                GetNext()?.SingleSelectOrFocus();
-                e.Handled = true;
-            }
-            else if (Keyboard.IsKeyDown(Key.Left))
-            {
-                if (HasItems && IsExpanded)
-                {
-                    IsExpanded = false;
-                }
-                else if (ParentItemsControl is MultiSelectTreeViewItem parent)
-                {
-                    parent.SingleSelectOrFocus();
-                }
+                case Key.Down:
+                    container.GetNext()?.KeyboardSelect();
+                    e.Handled = true;
+                    break;
 
-                e.Handled = true;
-            }
-            else if (Keyboard.IsKeyDown(Key.Right))
-            {
-                if (HasItems && !IsExpanded)
-                {
-                    IsExpanded = true;
-                }
+                case Key.Left:
+                case Key.Subtract:
+                    if (HasItems && IsExpanded)
+                    {
+                        IsExpanded = false;
+                    }
+                    else if (ParentItemsControl is MultiSelectTreeViewItem parent)
+                    {
+                        parent.KeyboardSelect();
+                    }
+                    e.Handled = true;
+                    break;
 
-                e.Handled = true;
-            }
-            else if (IsControlKeyDown && Keyboard.IsKeyDown(Key.Space))
-            {
-                ToggleSelect();
-                e.Handled = true;
+                case Key.Right:
+                case Key.Add:
+                    if (HasItems && !IsExpanded)
+                    {
+                        IsExpanded = true;
+                    }
+                    e.Handled = true;
+                    break;
+
+                case Key.PageUp:
+                case Key.Home:
+                    ParentTreeView.EnumerateContainers(i => i.IsExpanded).First()?.KeyboardSelect();
+                    e.Handled = true;
+                    break;
+
+                case Key.PageDown:
+                case Key.End:
+                    ParentTreeView.EnumerateContainers(i => i.IsExpanded).Last()?.KeyboardSelect();
+                    e.Handled = true;
+                    break;
+
+                case Key.Space:
+                    ToggleSelect();
+                    e.Handled = true;
+                    break;
             }
 
             base.OnKeyDown(e);
@@ -178,8 +171,11 @@ namespace Bismuth.Wpf.Controls
             return originalSource is DependencyObject f && f.FindVisualParent<MultiSelectTreeViewItem>() == this;
         }
 
-        private void SingleSelectOrFocus()
+        private void KeyboardSelect()
         {
+            if (IsShiftKeyDown)
+                MultiSelect();
+            else
             if (IsControlKeyDown)
                 Focus();
             else
@@ -211,7 +207,8 @@ namespace Bismuth.Wpf.Controls
             {
                 MultiSelect();
             }
-            else if (IsControlKeyDown)
+            else
+            if (IsControlKeyDown)
             {
                 ToggleSelect();
             }
