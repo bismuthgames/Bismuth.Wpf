@@ -15,6 +15,7 @@
             <Button Command="{Binding FixedSizeTest2Command}">Fixed Size Test 2</Button>
             <Button Command="{Binding ResetCommand}">Reset</Button>
             <Button Command="{Binding ClearCommand}">Clear</Button>
+            <Button Command="{Binding ClearPrimaryCommand}">Clear Primary</Button>
         </StackPanel>
         <Grid>
             <Grid.ColumnDefinitions>
@@ -22,13 +23,14 @@
                 <ColumnDefinition Width="6" />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <controls:DragDropTreeView x:Name="TreeView" ItemsSource="{Binding RootNodes}" SelectedItems="{Binding SelectedNodes}">
+            <controls:DragDropTreeView x:Name="TreeView" ItemsSource="{Binding RootNodes}" SelectedItems="{Binding SelectedNodes}" PrimarySelectedItem="{Binding PrimaryNode, Mode=TwoWay}">
                 <controls:DragDropTreeView.ItemContainerStyle>
                     <Style TargetType="{x:Type controls:DragDropTreeViewItem}" BasedOn="{StaticResource {x:Type controls:DragDropTreeViewItem}}">
                         <Setter Property="IsPrimarySelected" Value="{Binding IsPrimarySelected, Mode=TwoWay}" />
                         <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
                         <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
                         <Setter Property="Tag" Value="{Binding DataContext, ElementName=TreeView}" />
+                        <Setter Property="FontWeight" Value="Thin" />
                         <Setter Property="ContextMenu">
                             <Setter.Value>
                                 <ContextMenu>
@@ -42,8 +44,12 @@
                             </Setter.Value>
                         </Setter>
                         <Style.Triggers>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter Property="BorderThickness" Value="1" />
+                                <Setter Property="BorderBrush" Value="Red" />
+                            </Trigger>
                             <Trigger Property="IsPrimarySelected" Value="True">
-                                <Setter Property="Foreground" Value="Red" />
+                                <Setter Property="FontWeight" Value="Bold" />
                             </Trigger>
                         </Style.Triggers>
                     </Style>
@@ -51,8 +57,8 @@
                 <controls:DragDropTreeView.Resources>
                     <HierarchicalDataTemplate DataType="{x:Type vm:NodeViewModel}" ItemsSource="{Binding Children}">
                         <StackPanel Orientation="Horizontal">
-                            <CheckBox IsChecked="{Binding IsSelected}" />
-                            <CheckBox IsChecked="{Binding IsPrimarySelected}" />
+                            <CheckBox IsChecked="{Binding IsSelected}" Focusable="False" />
+                            <CheckBox IsChecked="{Binding IsPrimarySelected}" Focusable="False" />
                             <TextBlock Text="{Binding Name}" />
                         </StackPanel>
                     </HierarchicalDataTemplate>

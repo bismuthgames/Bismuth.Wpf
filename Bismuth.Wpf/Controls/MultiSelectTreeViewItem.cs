@@ -16,16 +16,16 @@ namespace Bismuth.Wpf.Controls
             set { SetValue(IsSelectedProperty, value); }
         }
 
-        public object IsPrimarySelected
+        public bool IsPrimarySelected
         {
-            get { return GetValue(IsPrimarySelectedProperty); }
+            get { return (bool)GetValue(IsPrimarySelectedProperty); }
             set { SetValue(IsPrimarySelectedProperty, value); }
         }
 
         public static readonly DependencyProperty IsPrimarySelectedProperty = DependencyProperty.Register
         (
             nameof(IsPrimarySelected),
-            typeof(object),
+            typeof(bool),
             typeof(MultiSelectTreeViewItem),
             new FrameworkPropertyMetadata
             (
@@ -59,13 +59,12 @@ namespace Bismuth.Wpf.Controls
 
             if ((bool)e.NewValue)
             {
-                parentTreeView.PrimarySelectedItem = ItemForContainer;
+                parentTreeView.SetPrimarySelectedItem(ItemForContainer);
                 if (!IsSelected) IsSelected = true;
             }
             else
             {
-                parentTreeView.EnsurePrimarySelectedItem();
-                //parentTreeView.PrimarySelectedItem = null;
+                parentTreeView.SetPrimarySelectedItem(null);
             }
         }
 
@@ -108,68 +107,66 @@ namespace Bismuth.Wpf.Controls
 
         protected override void OnKeyDown(KeyEventArgs e)
         {
+            //var container = IsShiftKeyDown ? ;
+
             if (IsShiftKeyDown)
             {
                 e.Handled = true;
 
-                //if (Keyboard.IsKeyDown(Key.Up))
-                //{
-                //    var previous = ParentTreeView.SecondarySelectedContainer.GetPrevious();
-                //    if (previous != null) ParentTreeView.MultiSelectRange(previous);
-                //}
-                //else if (Keyboard.IsKeyDown(Key.Down))
-                //{
-                //    var next = ParentTreeView.SecondarySelectedContainer.GetNext();
-                //    if (next != null) ParentTreeView.MultiSelectRange(next);
-                //}
-                //else if (Keyboard.IsKeyDown(Key.PageUp) || Keyboard.IsKeyDown(Key.Home))
-                //{
-                //    ParentTreeView.MultiSelectRange(ParentTreeView.EnumerateTreeViewItems(i => i.IsExpanded).First());
-                //}
-                //else if (Keyboard.IsKeyDown(Key.PageDown) || Keyboard.IsKeyDown(Key.End))
-                //{
-                //    ParentTreeView.MultiSelectRange(ParentTreeView.EnumerateTreeViewItems(i => i.IsExpanded).Last());
-                //}
+                if (Keyboard.IsKeyDown(Key.Up))
+                {
+                    ParentTreeView.SecondarySelectedContainer.GetPrevious()?.MultiSelect();
+                }
+                else if (Keyboard.IsKeyDown(Key.Down))
+                {
+                    ParentTreeView.SecondarySelectedContainer.GetNext()?.MultiSelect();
+                }
+                else if (Keyboard.IsKeyDown(Key.PageUp) || Keyboard.IsKeyDown(Key.Home))
+                {
+                    ParentTreeView.EnumerateContainers(i => i.IsExpanded).First()?.MultiSelect();
+                }
+                else if (Keyboard.IsKeyDown(Key.PageDown) || Keyboard.IsKeyDown(Key.End))
+                {
+                    ParentTreeView.EnumerateContainers(i => i.IsExpanded).Last()?.MultiSelect();
+                }
             }
             else if (Keyboard.IsKeyDown(Key.Up))
             {
-                ParentTreeView.ClearSelectedItems();
-                var prev = GetPrevious();
-                prev.Focus();
-                prev.IsPrimarySelected = true;
+                GetPrevious()?.SingleSelectOrFocus();
                 e.Handled = true;
             }
             else if (Keyboard.IsKeyDown(Key.Down))
             {
-                ParentTreeView.ClearSelectedItems();
-                var prev = GetNext();
-                prev.IsPrimarySelected = true;
-                prev.Focus();
+                GetNext()?.SingleSelectOrFocus();
                 e.Handled = true;
             }
             else if (Keyboard.IsKeyDown(Key.Left))
             {
-                if (Items.Count > 0 && IsExpanded)
+                if (HasItems && IsExpanded)
                 {
                     IsExpanded = false;
                 }
                 else if (ParentItemsControl is MultiSelectTreeViewItem parent)
                 {
-                    ParentTreeView.ClearSelectedItems();
-                    parent.IsPrimarySelected = true;
-                    parent.Focus();
+                    parent.SingleSelectOrFocus();
                 }
+
                 e.Handled = true;
             }
             else if (Keyboard.IsKeyDown(Key.Right))
             {
-                if (Items.Count > 0 && !IsExpanded)
+                if (HasItems && !IsExpanded)
                 {
                     IsExpanded = true;
                 }
+
+                e.Handled = true;
             }
-
-
+            else if (IsControlKeyDown && Keyboard.IsKeyDown(Key.Space))
+            {
+                ToggleSelect();
+                e.Handled = true;
+            }
 
             base.OnKeyDown(e);
         }
@@ -181,22 +178,46 @@ namespace Bismuth.Wpf.Controls
             return originalSource is DependencyObject f && f.FindVisualParent<MultiSelectTreeViewItem>() == this;
         }
 
+        private void SingleSelectOrFocus()
+        {
+            if (IsControlKeyDown)
+                Focus();
+            else
+                SingleSelect();
+        }
+
+        private void SingleSelect()
+        {
+            ParentTreeView.ClearSelectedItems();
+            IsPrimarySelected = true;
+            Focus();
+        }
+
+        private void ToggleSelect()
+        {
+            IsSelected = !IsSelected;
+            Focus();
+        }
+
+        private void MultiSelect()
+        {
+            ParentTreeView.MultiSelect(this);
+            Focus();
+        }
+
         private void SafeClick(MouseButtonEventArgs e)
         {
-            Console.WriteLine("Safe click!");
-
-            if (IsControlKeyDown)
+            if (IsShiftKeyDown)
             {
-                IsSelected = !IsSelected;
+                MultiSelect();
             }
-            else if (IsShiftKeyDown)
+            else if (IsControlKeyDown)
             {
-                ParentTreeView.MultiSelect(this);
+                ToggleSelect();
             }
             else
             {
-                ParentTreeView.ClearSelectedItems();
-                IsPrimarySelected = true;
+                SingleSelect();
             }
 
             e.Handled = true;
@@ -218,8 +239,6 @@ namespace Bismuth.Wpf.Controls
         {
             if (!e.Handled && IsEnabled && IsThis(e.OriginalSource))
             {
-                Focus();
-
                 if (!IsSelected)
                 {
                     _suppressMouseLeftButtonUp = true;
@@ -289,12 +308,17 @@ namespace Bismuth.Wpf.Controls
 
         protected override void OnItemsChanged(NotifyCollectionChangedEventArgs e)
         {
-            Console.WriteLine("Items changed");
             if (e.Action == NotifyCollectionChangedAction.Remove ||
                 e.Action == NotifyCollectionChangedAction.Reset)
                 ParentTreeView?.RefreshSelectedItems();
 
             base.OnItemsChanged(e);
         }
+
+        //protected override void OnGotFocus(RoutedEventArgs e)
+        //{
+        //    IsPrimarySelected = true;
+        //    base.OnGotFocus(e);
+        //}
     }
 }

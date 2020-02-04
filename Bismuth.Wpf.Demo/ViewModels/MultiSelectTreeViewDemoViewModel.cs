@@ -26,6 +26,13 @@ namespace Bismuth.Wpf.Demo.ViewModels
             set { Set(ref _selectedNodes, value); }
         }
 
+        private NodeViewModel _primaryNode;
+        public NodeViewModel PrimaryNode
+        {
+            get { return _primaryNode; }
+            set { Set(ref _primaryNode, value); }
+        }
+
         public ICommand CreateTreeCommand => new RelayCommand(CreateTree);
 
         public void CreateTree()
@@ -115,6 +122,13 @@ namespace Bismuth.Wpf.Demo.ViewModels
         public void Unselect(NodeViewModel node)
         {
             SelectedNodes.Remove(node);
+        }
+
+        public ICommand ClearPrimaryCommand => new RelayCommand(ClearPrimary);
+
+        public void ClearPrimary()
+        {
+            PrimaryNode = null;
         }
     }
 }

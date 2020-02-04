@@ -3,8 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using Bismuth.Wpf.Helpers;
@@ -17,6 +15,7 @@ namespace Bismuth.Wpf.Controls
         protected override bool IsItemItsOwnContainerOverride(object item) => item is MultiSelectTreeViewItem;
 
         internal MultiSelectTreeViewItem PrimarySelectedContainer { get; private set; }
+        internal MultiSelectTreeViewItem SecondarySelectedContainer { get; private set; }
 
         private bool _suppressCollectionChanged;
         private bool _suppressPrimarySelectedItemChanged;
@@ -29,9 +28,10 @@ namespace Bismuth.Wpf.Controls
 
         public static readonly DependencyProperty PrimarySelectedItemProperty =
             DependencyProperty.Register(nameof(PrimarySelectedItem), typeof(object), typeof(MultiSelectTreeView), new PropertyMetadata(null,
-                (d, e) => ((MultiSelectTreeView)d).OnPrimarySelectedItemChanged(e)));
+                (d, e) => ((MultiSelectTreeView)d).SetPrimarySelectedItem(e.NewValue)));
+                //(d, e) => ((MultiSelectTreeView)d).CoercePrimarySelectedItem(e)));
 
-        private void OnPrimarySelectedItemChanged(DependencyPropertyChangedEventArgs e)
+        internal void SetPrimarySelectedItem(object item)
         {
             if (_suppressPrimarySelectedItemChanged) return;
 
@@ -39,10 +39,15 @@ namespace Bismuth.Wpf.Controls
             {
                 _suppressPrimarySelectedItemChanged = true;
 
+                if (item == null)
+                    item = SelectedItems?.Cast<object>().FirstOrDefault();
+
                 if (PrimarySelectedContainer != null)
                     PrimarySelectedContainer.IsPrimarySelected = false;
 
-                PrimarySelectedContainer = EnumerateContainers().FirstOrDefault(i => i.ItemForContainer == e.NewValue);
+                PrimarySelectedItem = item;
+                PrimarySelectedContainer = EnumerateContainers().FirstOrDefault(i => i.ItemForContainer == item);
+                SecondarySelectedContainer = PrimarySelectedContainer;
 
                 if (PrimarySelectedContainer != null)
                     PrimarySelectedContainer.IsPrimarySelected = true;
@@ -51,6 +56,19 @@ namespace Bismuth.Wpf.Controls
             {
                 _suppressPrimarySelectedItemChanged = false;
             }
+        }
+
+        private object CoercePrimarySelectedItem(object baseValue)
+        {
+            return baseValue ?? SelectedItems?.Cast<object>()?.FirstOrDefault();
+        }
+
+        internal void EnsurePrimarySelectedItem()
+        {
+            if (SelectedItems != null && PrimarySelectedItem != null &&
+                SelectedItems.Contains(PrimarySelectedItem)) return;
+
+            PrimarySelectedItem = SelectedItems?.Cast<object>()?.FirstOrDefault();
         }
 
         public IList SelectedItems
@@ -127,20 +145,6 @@ namespace Bismuth.Wpf.Controls
                     i.IsSelected = value;
         }
 
-        internal void EnsurePrimarySelectedItem()
-        {
-            if (SelectedItems != null && PrimarySelectedItem != null &&
-                SelectedItems.Contains(PrimarySelectedItem)) return;
-
-            PrimarySelectedItem = SelectedItems?.Cast<object>()?.FirstOrDefault();
-
-            //if (PrimarySelectedContainer != null &&
-            //    PrimarySelectedContainer.ParentTreeView == this &&
-            //    PrimarySelectedContainer.IsSelected)
-            //    return;
-            //PrimarySelectedItem = EnumerateContainers().FirstOrDefault(i => i.IsSelected)?.ItemForContainer;
-        }
-
         internal void SelectItem(object item)
         {
             if (_suppressCollectionChanged) return;
@@ -181,13 +185,6 @@ namespace Bismuth.Wpf.Controls
                 i.IsSelected = false;
         }
 
-        //internal void UnselectAllExceptPrimary()
-        //{
-        //    var primarySelectedContainer = PrimarySelectedContainer;
-        //    foreach (var i in EnumerateContainers().Where(i => i != primarySelectedContainer))
-        //        i.IsSelected = false;
-        //}
-
         internal void RefreshSelectedItems()
         {
             if (SelectedItems == null || SelectedItems.IsReadOnly || SelectedItems.IsFixedSize || SelectedItems.Count == 0) return;
@@ -224,72 +221,28 @@ namespace Bismuth.Wpf.Controls
             _suppressCollectionChanged = false;
         }
 
-        //private void SingleSelect(MultiSelectTreeViewItem container)
-        //{
-        //    _suppressCollectionChanged = true;
-
-        //    if (SelectedItems != null && !SelectedItems.IsReadOnly && !SelectedItems.IsFixedSize)
-        //        SelectedItems.Clear();
-
-        //    UnselectAll();
-
-        //    _suppressCollectionChanged = false;
-        //}
-
         internal void MultiSelect(MultiSelectTreeViewItem container)
         {
             if (PrimarySelectedContainer == null)
                 container.IsPrimarySelected = true;
 
-            MultiSelectRange(PrimarySelectedContainer, container);
+            SecondarySelectedContainer = container;
+
+            MultiSelectRange(PrimarySelectedContainer, SecondarySelectedContainer);
         }
 
-        //internal void MultiSelect(MultiSelectTreeViewItem container)
-        //{
-        //    var primarySelectedContainer = _primarySelectedContainer;
+        internal void MultiSelectRange(MultiSelectTreeViewItem container)
+        {
+            SecondarySelectedContainer = container;
 
-        //    if (primarySelectedContainer == container)
-        //    {
-        //        // If this item is the primary selected item, we want to find the next item
-        //        // (which is first item in the selection list other than the current one)
-        //        // and make that the primary one.
-        //        // If no items were found, we just unselect the current one.
-        //        // NOTE: MakePrimary() will automatically unselect the current primary item.
-        //        var nextSelectedContainer = EnumerateTreeViewItems().FirstOrDefault(i => i.IsSelected && i != container);
-        //        if (nextSelectedContainer != null)
-        //        {
-        //            nextSelectedContainer.MakePrimary();
-        //        }
-        //        else
-        //        {
-        //            container.IsSelected = false;
-        //        }
-        //    }
-        //    else if (primarySelectedContainer == null)
-        //    {
-        //        container.IsSelected = !container.IsSelected;
-        //    }
-        //    else if (container.IsSelected)
-        //    {
-        //        container.IsSelected = false;
-        //    }
-        //    else
-        //    {
-        //        container.IsSelected = true;
-        //    }
-        //}
+            if (PrimarySelectedContainer == null)
+                container.IsPrimarySelected = true;
 
-        //internal void MultiSelectRange(OldMultiSelectTreeViewItem container)
-        //{
-        //    SecondarySelectedContainer = container;
+            //if (PrimarySelectedContainer == null) SelectFirst();
+            //if (PrimarySelectedContainer == null) return;
 
-        //    if (PrimarySelectedContainer == null) SelectFirst();
-        //    if (PrimarySelectedContainer == null) return;
-
-        //    IsSelectionChangeActive = true;
-        //    MultiSelectRange(PrimarySelectedContainer, SecondarySelectedContainer);
-        //    IsSelectionChangeActive = false;
-        //}
+            MultiSelectRange(PrimarySelectedContainer, SecondarySelectedContainer);
+        }
 
         private void MultiSelectRange(MultiSelectTreeViewItem a, MultiSelectTreeViewItem b)
         {
@@ -311,13 +264,6 @@ namespace Bismuth.Wpf.Controls
                     i.UnselectRecursive();
             }
         }
-
-        //private void SelectFirst()
-        //{
-        //    if (ItemContainerGenerator.Items.Count > 0 &&
-        //        ItemContainerGenerator.ContainerFromIndex(0) is MultiSelectTreeViewItem treeViewItem)
-        //        treeViewItem.IsSelected = true;
-        //}
 
         internal IEnumerable<MultiSelectTreeViewItem> EnumerateContainers()
         {
