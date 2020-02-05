@@ -22,6 +22,13 @@ namespace Bismuth.Wpf.Demo.ViewModels
         public string Name { get; }
         public IList<NodeViewModel> Children { get; }
 
+        private bool _isPrimary;
+        public bool IsPrimary
+        {
+            get { return _isPrimary; }
+            set { Set(ref _isPrimary, value); }
+        }
+
         private bool _isSelected;
         public bool IsSelected
         {

@@ -29,10 +29,10 @@
                     <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" />
                 </Grid>
             </TabItem>
-            <TabItem Header="Controls" IsSelected="True">
+            <TabItem Header="Controls">
                 <v:ControlsDemoView />
             </TabItem>
-            <TabItem Header="MultiSelectTreeView">
+            <TabItem Header="MultiSelectTreeView" IsSelected="True">
                 <v:MultiSelectTreeViewDemoView DataContext="{Binding MultiSelectTreeViewDemo}" />
             </TabItem>
             <TabItem Header="DragDrop">

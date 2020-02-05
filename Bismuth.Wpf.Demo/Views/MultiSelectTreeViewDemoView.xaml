@@ -15,6 +15,7 @@
             <Button Command="{Binding FixedSizeTest2Command}">Fixed Size Test 2</Button>
             <Button Command="{Binding ResetCommand}">Reset</Button>
             <Button Command="{Binding ClearCommand}">Clear</Button>
+            <Button Command="{Binding ClearPrimaryCommand}">Clear Primary</Button>
         </StackPanel>
         <Grid>
             <Grid.ColumnDefinitions>
@@ -22,12 +23,14 @@
                 <ColumnDefinition Width="6" />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <controls:MultiSelectTreeView x:Name="TreeView" ItemsSource="{Binding RootNodes}" SelectedItems="{Binding SelectedNodes}">
-                <controls:MultiSelectTreeView.ItemContainerStyle>
-                    <Style TargetType="{x:Type controls:MultiSelectTreeViewItem}" BasedOn="{StaticResource {x:Type TreeViewItem}}">
-                        <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
-                        <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+            <controls:DragDropTreeView x:Name="TreeView" ItemsSource="{Binding RootNodes}" SelectedItems="{Binding SelectedNodes}" PrimaryItem="{Binding PrimaryNode, Mode=TwoWay}">
+                <controls:DragDropTreeView.ItemContainerStyle>
+                    <Style TargetType="{x:Type controls:DragDropTreeViewItem}" BasedOn="{StaticResource {x:Type controls:DragDropTreeViewItem}}">
+                        <Setter Property="IsPrimary" Value="{Binding IsPrimary}" />
+                        <Setter Property="IsSelected" Value="{Binding IsSelected}" />
+                        <Setter Property="IsExpanded" Value="{Binding IsExpanded}" />
                         <Setter Property="Tag" Value="{Binding DataContext, ElementName=TreeView}" />
+                        <Setter Property="FontWeight" Value="Thin" />
                         <Setter Property="ContextMenu">
                             <Setter.Value>
                                 <ContextMenu>
@@ -40,18 +43,31 @@
                                 </ContextMenu>
                             </Setter.Value>
                         </Setter>
+                        <Style.Triggers>
+                            <Trigger Property="IsPrimary" Value="True">
+                                <Setter Property="FontWeight" Value="Bold" />
+                            </Trigger>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter Property="BorderThickness" Value="1" />
+                                <Setter Property="BorderBrush" Value="Red" />
+                            </Trigger>
+                        </Style.Triggers>
                     </Style>
-                </controls:MultiSelectTreeView.ItemContainerStyle>
-                <controls:MultiSelectTreeView.Resources>
+                </controls:DragDropTreeView.ItemContainerStyle>
+                <controls:DragDropTreeView.Resources>
                     <HierarchicalDataTemplate DataType="{x:Type vm:NodeViewModel}" ItemsSource="{Binding Children}">
-                        <TextBlock Text="{Binding Name}" />
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox IsChecked="{Binding IsSelected}" Focusable="False" />
+                            <CheckBox IsChecked="{Binding IsPrimary}" Focusable="False" />
+                            <TextBlock Text="{Binding Name}" />
+                        </StackPanel>
                     </HierarchicalDataTemplate>
-                </controls:MultiSelectTreeView.Resources>
-            </controls:MultiSelectTreeView>
+                </controls:DragDropTreeView.Resources>
+            </controls:DragDropTreeView>
             <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" />
             <DockPanel Grid.Column="2">
                 <TextBlock DockPanel.Dock="Top" Text="Primary Selected Item" FontWeight="Bold" />
-                <ContentControl DockPanel.Dock="Top" Content="{Binding SelectedItem, ElementName=TreeView}" Height="22" />
+                <ContentControl DockPanel.Dock="Top" Content="{Binding PrimaryItem, ElementName=TreeView}" Height="22" />
                 <TextBlock DockPanel.Dock="Top" Text="Selected Items" FontWeight="Bold" />
                 <ListBox ItemsSource="{Binding SelectedItems, ElementName=TreeView}" />
             </DockPanel>
