@@ -286,6 +286,24 @@ namespace Bismuth.Wpf.Controls
             }
         }
 
+        public int TreeDepth
+        {
+            get
+            {
+                var treeDepth = 0;
+                var itemsControl = ParentItemsControl;
+                while (itemsControl != null)
+                {
+                    if (itemsControl is MultiSelectTreeView) return treeDepth;
+
+                    itemsControl = ItemsControlFromItemContainer(itemsControl);
+                    treeDepth++;
+                }
+
+                return -1;
+            }
+        }
+
         private MultiSelectTreeViewItem GetPrevious()
         {
             return ParentTreeView

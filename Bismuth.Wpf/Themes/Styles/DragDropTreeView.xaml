@@ -3,7 +3,7 @@
                     xmlns:controls="clr-namespace:Bismuth.Wpf.Controls"
                     xmlns:converters="clr-namespace:Bismuth.Wpf.Converters">
 
-    <converters:DepthToIndentConverter x:Key="DepthToIndent" IndentLength="20" />
+    <converters:DoubleToThicknessConverter x:Key="DoubleToThickness" Scale="20,0,0,0" />
 
     <SolidColorBrush x:Key="DragDropTreeView.Foreground" Color="#FFF" />
     <SolidColorBrush x:Key="DragDropTreeView.Background" Color="#111" />
@@ -190,7 +190,7 @@
                         </controls:DropTarget>
 
                         <ToggleButton Name="Expander" Grid.Row="1" Width="20"
-                                      Margin="{Binding RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource DepthToIndent}}"
+                                      Margin="{Binding TreeDepth, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource DoubleToThickness}}"
                                       ClickMode="Press"
                                       IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"
                                       Style="{StaticResource ExpandCollapseToggleButtonStyle}" />
