@@ -3,8 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using Bismuth.Wpf.Helpers;
@@ -13,17 +11,18 @@ namespace Bismuth.Wpf.Controls
 {
     public class MultiSelectTreeView : ItemsControl
     {
-        protected override DependencyObject GetContainerForItemOverride()
-        {
-            return new MultiSelectTreeViewItem();
-        }
-
-        protected override bool IsItemItsOwnContainerOverride(object item)
-        {
-            return item is MultiSelectTreeViewItem;
-        }
-
+        private bool _suppressPrimaryItemChanged;
         private bool _suppressCollectionChanged;
+
+        public object PrimaryItem
+        {
+            get { return GetValue(PrimaryItemProperty); }
+            set { SetValue(PrimaryItemProperty, value); }
+        }
+
+        public static readonly DependencyProperty PrimaryItemProperty =
+            DependencyProperty.Register(nameof(PrimaryItem), typeof(object), typeof(MultiSelectTreeView),
+                new PropertyMetadata((d, e) => ((MultiSelectTreeView)d).SetPrimaryItem(e.NewValue)));
 
         public IList SelectedItems
         {
@@ -37,70 +36,113 @@ namespace Bismuth.Wpf.Controls
 
         private void OnSelectedItemsChanged(DependencyPropertyChangedEventArgs e)
         {
-            _suppressCollectionChanged = true;
+            try
+            {
+                _suppressCollectionChanged = true;
 
-            if (e.OldValue is INotifyCollectionChanged oldObservableList)
-                oldObservableList.CollectionChanged -= CollectionChanged;
+                if (e.OldValue is INotifyCollectionChanged oldObservableList)
+                    oldObservableList.CollectionChanged -= CollectionChanged;
 
-            UnselectAll();
+                UnselectAll();
 
-            if (e.NewValue is IList newList)
-                SetIsSelected(newList, true);
+                if (e.NewValue is IList newList)
+                    SetIsSelected(newList, true);
 
-            EnsurePrimarySelectedContainer();
+                EnsurePrimaryItem();
 
-            if (e.NewValue is INotifyCollectionChanged newObservableList)
-                newObservableList.CollectionChanged += CollectionChanged;
-
-            _suppressCollectionChanged = false;
+                if (e.NewValue is INotifyCollectionChanged newObservableList)
+                    newObservableList.CollectionChanged += CollectionChanged;
+            }
+            finally
+            {
+                _suppressCollectionChanged = false;
+            }
         }
 
         private void CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (_suppressCollectionChanged) return;
-            _suppressCollectionChanged = true;
 
-            switch (e.Action)
+            try
             {
-                case NotifyCollectionChangedAction.Add:
-                case NotifyCollectionChangedAction.Remove:
-                case NotifyCollectionChangedAction.Replace:
-                case NotifyCollectionChangedAction.Move:
+                _suppressCollectionChanged = true;
 
-                    if (e.OldItems != null) SetIsSelected(e.OldItems, false);
-                    if (e.NewItems != null) SetIsSelected(e.NewItems, true);
+                switch (e.Action)
+                {
+                    case NotifyCollectionChangedAction.Add:
+                    case NotifyCollectionChangedAction.Remove:
+                    case NotifyCollectionChangedAction.Replace:
+                    case NotifyCollectionChangedAction.Move:
 
-                    break;
+                        if (e.OldItems != null) SetIsSelected(e.OldItems, false);
+                        if (e.NewItems != null) SetIsSelected(e.NewItems, true);
 
-                case NotifyCollectionChangedAction.Reset:
+                        break;
 
-                    UnselectAll();
-                    if (SelectedItems is IList list)
-                        SetIsSelected(list, true);
+                    case NotifyCollectionChangedAction.Reset:
 
-                    break;
+                        UnselectAll();
+                        if (SelectedItems is IList list)
+                            SetIsSelected(list, true);
+
+                        break;
+                }
+
+                EnsurePrimaryItem();
             }
-
-            EnsurePrimarySelectedContainer();
-
-            _suppressCollectionChanged = false;
+            finally
+            {
+                _suppressCollectionChanged = false;
+            }
         }
 
         private void SetIsSelected(IList items, bool value)
         {
-            //if (value) IsSelectionChangeActive = true;
-
-            //foreach (var i in EnumerateTreeViewItems())
-            //    if (items.Contains(i.ItemForContainer))
-            //        i.IsSelected = value;
-
-            //if (value) IsSelectionChangeActive = false;
+            foreach (var i in EnumerateContainers())
+                if (items.Contains(i.ItemForContainer))
+                    i.IsSelected = value;
         }
 
-        private void EnsurePrimarySelectedContainer()
+        internal void SelectItem(object item)
         {
-            //if (SelectedItems != null && SelectedItems.Count > 0)
-            //    EnumerateTreeViewItems().FirstOrDefault(i => i.IsSelected)?.MakePrimary();
+            if (SelectedItems == null || SelectedItems.IsReadOnly || SelectedItems.IsFixedSize) return;
+
+            if (_suppressCollectionChanged) return;
+
+            try
+            {
+                _suppressCollectionChanged = true;
+
+                SelectedItems.Add(item);
+            }
+            finally
+            {
+                _suppressCollectionChanged = false;
+            }
+        }
+
+        internal void UnselectItem(object item)
+        {
+            if (SelectedItems == null || SelectedItems.IsReadOnly || SelectedItems.IsFixedSize) return;
+
+            if (_suppressCollectionChanged) return;
+
+            try
+            {
+                _suppressCollectionChanged = true;
+
+                SelectedItems.Remove(item);
+            }
+            finally
+            {
+                _suppressCollectionChanged = false;
+            }
+        }
+
+        internal void UnselectAll()
+        {
+            foreach (var i in EnumerateContainers())
+                i.IsSelected = false;
         }
 
         internal void RefreshSelectedItems()
@@ -111,78 +153,141 @@ namespace Bismuth.Wpf.Controls
                 .Cast<object>()
                 .ToArray();
 
-            var newSelectedItems = EnumerateTreeViewItems(i => i.IsExpanded)
+            var newSelectedItems = EnumerateContainers(i => i.IsExpanded)
                 .Where(i => i.IsSelected)
                 .Select(i => i.ItemForContainer)
                 .ToArray();
 
             foreach (object item in oldSelectedItems.Except(newSelectedItems))
-                RemoveFromSelected(item);
+                UnselectItem(item);
 
             foreach (object item in newSelectedItems.Except(oldSelectedItems))
-                AddToSelected(item);
+                SelectItem(item);
+
+            EnsurePrimaryItem();
         }
 
-        internal void AddToSelected(object item)
+        internal void ClearSelectedItems()
         {
-            if (SelectedItems == null || SelectedItems.IsReadOnly || SelectedItems.IsFixedSize) return;
+            try
+            {
+                _suppressCollectionChanged = true;
 
-            if (_suppressCollectionChanged) return;
-            _suppressCollectionChanged = true;
+                PrimaryItem = null;
 
-            SelectedItems.Add(item);
+                if (SelectedItems != null && !SelectedItems.IsReadOnly && !SelectedItems.IsFixedSize)
+                    SelectedItems.Clear();
 
-            _suppressCollectionChanged = false;
+                UnselectAll();
+            }
+            finally
+            {
+                _suppressCollectionChanged = false;
+            }
         }
 
-        internal void RemoveFromSelected(object item)
+        internal MultiSelectTreeViewItem PrimaryContainer { get; private set; }
+        internal MultiSelectTreeViewItem SecondaryContainer { get; private set; }
+
+        internal void SetPrimaryItem(object item)
         {
-            if (SelectedItems == null || SelectedItems.IsReadOnly || SelectedItems.IsFixedSize) return;
+            if (_suppressPrimaryItemChanged) return;
 
-            if (_suppressCollectionChanged) return;
-            _suppressCollectionChanged = true;
+            try
+            {
+                _suppressPrimaryItemChanged = true;
 
-            SelectedItems.Remove(item);
+                if (item == null)
+                    item = SelectedItems?.Cast<object>().FirstOrDefault();
 
-            _suppressCollectionChanged = false;
+                if (PrimaryContainer != null)
+                    PrimaryContainer.IsPrimary = false;
+
+                PrimaryItem = item;
+                PrimaryContainer = EnumerateContainers().FirstOrDefault(i => i.ItemForContainer == item);
+                SecondaryContainer = PrimaryContainer;
+
+                if (PrimaryContainer != null)
+                    PrimaryContainer.IsPrimary = true;
+            }
+            finally
+            {
+                _suppressPrimaryItemChanged = false;
+            }
         }
 
-        internal void UnselectAll()
+        internal void EnsurePrimaryItem()
         {
-            foreach (var i in EnumerateTreeViewItems())
-                i.IsSelected = false;
+            if (SelectedItems != null && PrimaryItem != null &&
+                SelectedItems.Contains(PrimaryItem)) return;
+
+            PrimaryItem = SelectedItems?.Cast<object>()?.FirstOrDefault();
         }
 
-        internal void UnselectAllExceptPrimary()
+        internal void MultiSelect(MultiSelectTreeViewItem container)
         {
-            //var primarySelectedContainer = PrimarySelectedContainer;
-            //foreach (var i in EnumerateTreeViewItems().Where(i => i != primarySelectedContainer))
-            //    i.IsSelected = false;
+            if (PrimaryContainer == null)
+                container.IsPrimary = true;
+
+            SecondaryContainer = container;
+
+            MultiSelectRange(PrimaryContainer, SecondaryContainer);
         }
 
-        internal IEnumerable<MultiSelectTreeViewItem> EnumerateTreeViewItems()
+        private void MultiSelectRange(MultiSelectTreeViewItem a, MultiSelectTreeViewItem b)
         {
-            return EnumerateTreeViewItems(ItemContainerGenerator, _ => true);
+            bool isBetween = false;
+
+            foreach (var i in EnumerateContainers(i => i.IsExpanded))
+            {
+                if (i == a || i == b)
+                {
+                    i.IsSelected = true;
+                    if (a != b) isBetween = !isBetween;
+                }
+                else
+                {
+                    i.IsSelected = isBetween;
+                }
+
+                if (!i.IsExpanded)
+                    i.UnselectRecursive();
+            }
         }
 
-        internal IEnumerable<MultiSelectTreeViewItem> EnumerateTreeViewItems(Func<MultiSelectTreeViewItem, bool> includeChildren)
+        internal IEnumerable<MultiSelectTreeViewItem> EnumerateContainers()
         {
-            return EnumerateTreeViewItems(ItemContainerGenerator, includeChildren);
+            return EnumerateContainers(ItemContainerGenerator, _ => true);
         }
 
-        private IEnumerable<MultiSelectTreeViewItem> EnumerateTreeViewItems(ItemContainerGenerator generator, Func<MultiSelectTreeViewItem, bool> includeChildren)
+        internal IEnumerable<MultiSelectTreeViewItem> EnumerateContainers(Func<MultiSelectTreeViewItem, bool> includeChildren)
+        {
+            return EnumerateContainers(ItemContainerGenerator, includeChildren);
+        }
+
+        private IEnumerable<MultiSelectTreeViewItem> EnumerateContainers(ItemContainerGenerator generator, Func<MultiSelectTreeViewItem, bool> includeChildren)
         {
             for (int i = 0; i < generator.Items.Count; i++)
             {
-                if (generator.ContainerFromIndex(i) is MultiSelectTreeViewItem treeViewItem)
+                if (generator.ContainerFromIndex(i) is MultiSelectTreeViewItem container)
                 {
-                    yield return treeViewItem;
+                    yield return container;
 
-                    if (includeChildren(treeViewItem))
-                        foreach (var child in EnumerateTreeViewItems(treeViewItem.ItemContainerGenerator, includeChildren))
+                    if (includeChildren(container))
+                        foreach (var child in EnumerateContainers(container.ItemContainerGenerator, includeChildren))
                             yield return child;
                 }
             }
+        }
+
+        protected override DependencyObject GetContainerForItemOverride()
+        {
+            return new MultiSelectTreeViewItem();
+        }
+
+        protected override bool IsItemItsOwnContainerOverride(object item)
+        {
+            return item is MultiSelectTreeViewItem;
         }
     }
 }

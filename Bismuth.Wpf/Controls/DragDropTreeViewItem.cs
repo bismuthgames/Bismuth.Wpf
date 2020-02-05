@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using Bismuth.Wpf.Extensions;
 
@@ -80,22 +79,14 @@ namespace Bismuth.Wpf.Controls
             if (beforeDropTarget != null)
             {
                 beforeDropTarget.IsEnabled = DropBeforeCommand != null;
-                beforeDropTarget.DropZIndex = GetDepth(this);
+                beforeDropTarget.DropZIndex = TreeDepth;
             }
 
             if (afterDropTarget != null)
             {
                 afterDropTarget.IsEnabled = DropAfterCommand != null;
-                afterDropTarget.DropZIndex = GetDepth(this);
+                afterDropTarget.DropZIndex = TreeDepth;
             }
-        }
-
-        private int GetDepth(MultiSelectTreeViewItem item)
-        {
-            var parent = item.FindVisualParent<MultiSelectTreeViewItem>();
-            if (parent != null) return GetDepth(parent) + 1;
-
-            return 0;
         }
 
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
