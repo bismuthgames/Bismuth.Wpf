@@ -105,7 +105,7 @@
     <Compile Include="Controls\PropertyInspector\PropertyValueEditorTemplateSelector.cs" />
     <Compile Include="Controls\SqueezePanel.cs" />
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
-    <Compile Include="Converters\DepthToIndentConverter.cs" />
+    <Compile Include="Converters\DoubleToThicknessConverter.cs" />
     <Compile Include="Converters\EnumToValuesConverter.cs" />
     <Compile Include="Converters\EqualityConverter.cs" />
     <Compile Include="Converters\IsLastItemConverter.cs" />

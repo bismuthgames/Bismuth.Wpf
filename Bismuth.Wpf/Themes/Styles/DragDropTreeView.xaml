@@ -3,7 +3,7 @@
                     xmlns:controls="clr-namespace:Bismuth.Wpf.Controls"
                     xmlns:converters="clr-namespace:Bismuth.Wpf.Converters">
 
-    <converters:DepthToIndentConverter x:Key="DepthToIndent" IndentLength="20" />
+    <converters:DoubleToThicknessConverter x:Key="DoubleToThickness" Scale="20,0,0,0" />
 
     <SolidColorBrush x:Key="DragDropTreeView.Foreground" Color="#FFF" />
     <SolidColorBrush x:Key="DragDropTreeView.Background" Color="#111" />
@@ -189,7 +189,7 @@
                         </controls:DropTarget>
 
                         <ToggleButton Name="Expander" Grid.Row="1" Width="20"
-                                      Margin="{Binding RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource DepthToIndent}}"
+                                      Margin="{Binding TreeDepth, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource DoubleToThickness}}"
                                       ClickMode="Press"
                                       IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"
                                       Style="{StaticResource ExpandCollapseToggleButtonStyle}" />
@@ -227,14 +227,14 @@
                             <Setter Property="Foreground" Value="{DynamicResource DragDropTreeViewItem.Selected.Foreground}" />
                             <Setter Property="Background" Value="{DynamicResource DragDropTreeViewItem.Selected.Background}" />
                         </Trigger>
-                        <!--<MultiTrigger>
+                        <MultiTrigger>
                             <MultiTrigger.Conditions>
-                                <Condition Property="IsSelected" Value="True" />
-                                <Condition Property="IsSelectionActive" Value="False" />
+                                <Condition Property="IsSelected" Value="False" />
+                                <Condition Property="IsFocused" Value="True" />
                             </MultiTrigger.Conditions>
-                            <Setter Property="Foreground" Value="{DynamicResource DragDropTreeViewItem.Selected.Foreground}" />
-                            <Setter Property="Background" Value="{DynamicResource DragDropTreeViewItem.Selected.Background}" />
-                        </MultiTrigger>-->
+                            <Setter Property="BorderThickness" Value="1" />
+                            <Setter Property="BorderBrush" Value="{DynamicResource DragDropTreeViewItem.Selected.Background}" />
+                        </MultiTrigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Foreground" Value="{DynamicResource DragDropTreeViewItem.Disabled.Foreground}" />
                         </Trigger>
