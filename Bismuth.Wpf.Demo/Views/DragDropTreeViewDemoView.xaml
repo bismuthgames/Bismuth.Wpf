@@ -11,8 +11,9 @@
     <controls:DragDropTreeView ItemsSource="{Binding RootNodes}" SelectedItems="{Binding SelectedNodes}">
         <controls:DragDropTreeView.ItemContainerStyle>
             <Style TargetType="{x:Type controls:DragDropTreeViewItem}" BasedOn="{StaticResource {x:Type controls:DragDropTreeViewItem}}">
-                <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
-                <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                <Setter Property="IsPrimary" Value="{Binding IsPrimary}" />
+                <Setter Property="IsSelected" Value="{Binding IsSelected}" />
+                <Setter Property="IsExpanded" Value="{Binding IsExpanded}" />
                 <Setter Property="AcceptFunction" Value="{Binding AcceptFunction}" />
                 <!--<Setter Property="AcceptTypes" Value="{Binding AcceptTypes}" />-->
                 <Setter Property="DropCommand" Value="{Binding DropCommand}" />
