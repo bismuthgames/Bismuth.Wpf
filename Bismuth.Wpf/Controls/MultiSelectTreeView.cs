@@ -5,6 +5,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using Bismuth.Wpf.Extensions;
 using Bismuth.Wpf.Helpers;
 
 namespace Bismuth.Wpf.Controls
@@ -288,6 +289,25 @@ namespace Bismuth.Wpf.Controls
         protected override bool IsItemItsOwnContainerOverride(object item)
         {
             return item is MultiSelectTreeViewItem;
+        }
+
+        protected override void OnItemsSourceChanged(IEnumerable oldValue, IEnumerable newValue)
+        {
+            PreloadContainers();
+
+            base.OnItemsSourceChanged(oldValue, newValue);
+        }
+
+        private void PreloadContainers()
+        {
+            foreach (var container in EnumerateContainers())
+            {
+                container.ApplyTemplate();
+                if (container.Template.FindName("ItemsHost", container) is ItemsPresenter itemsPresenter)
+                    itemsPresenter.ApplyTemplate();
+
+                container.GetItemsHost().EnsureGenerator();
+            }
         }
     }
 }

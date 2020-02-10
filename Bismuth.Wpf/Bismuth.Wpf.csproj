@@ -112,6 +112,7 @@
     <Compile Include="Converters\IsPreviousItemSelectedConverter.cs" />
     <Compile Include="Extensions\LogicalTree.cs" />
     <Compile Include="Extensions\VisualTree.cs" />
+    <Compile Include="Extensions\Workarounds.cs" />
     <Compile Include="Helpers\DefaultValueFactory.cs" />
     <Compile Include="Helpers\MouseHelper.cs" />
     <Compile Include="Helpers\WindowHelper.cs" />
