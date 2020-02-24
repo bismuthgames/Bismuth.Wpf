@@ -25,7 +25,7 @@ namespace Bismuth.Wpf.Extensions
                 .FirstOrDefault(parent => parent.MatchOnName(name));
         }
 
-        public static T FindLogicalChildren<T>(this DependencyObject current) where T : DependencyObject
+        public static T FindLogicalChild<T>(this DependencyObject current) where T : DependencyObject
         {
             return current
                 .EnumerateLogicalChildren()
@@ -41,6 +41,13 @@ namespace Bismuth.Wpf.Extensions
                 .EnumerateLogicalParents()
                 .OfType<T>()
                 .FirstOrDefault(child => child.MatchOnName(name));
+        }
+
+        public static IEnumerable<T> FindLogicalChildren<T>(this DependencyObject current) where T : DependencyObject
+        {
+            return current
+                .EnumerateLogicalChildren()
+                .OfType<T>();
         }
 
         public static IEnumerable<DependencyObject> EnumerateLogicalParents(this DependencyObject current)

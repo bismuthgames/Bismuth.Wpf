@@ -26,7 +26,7 @@ namespace Bismuth.Wpf.Extensions
                 .FirstOrDefault(parent => parent.MatchOnName(name));
         }
 
-        public static T FindVisualChildren<T>(this DependencyObject current) where T : DependencyObject
+        public static T FindVisualChild<T>(this DependencyObject current) where T : DependencyObject
         {
             return current
                 .EnumerateVisualChildren()
@@ -42,6 +42,13 @@ namespace Bismuth.Wpf.Extensions
                 .EnumerateVisualParents()
                 .OfType<T>()
                 .FirstOrDefault(child => child.MatchOnName(name));
+        }
+
+        public static IEnumerable<T> FindVisualChildren<T>(this DependencyObject current) where T : DependencyObject
+        {
+            return current
+                .EnumerateVisualChildren()
+                .OfType<T>();
         }
 
         public static IEnumerable<DependencyObject> EnumerateVisualParents(this DependencyObject current)
