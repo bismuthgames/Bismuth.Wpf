@@ -1,9 +1,9 @@
 ﻿<UserControl x:Class="Bismuth.Wpf.Demo.Views.MultiSelectTreeViewDemoView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:bm="http://schemas.bismuth.dk/winfx/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:controls="clr-namespace:Bismuth.Wpf.Controls;assembly=Bismuth.Wpf"
              xmlns:vm="clr-namespace:Bismuth.Wpf.Demo.ViewModels"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance vm:MultiSelectTreeViewDemoViewModel, IsDesignTimeCreatable=False}"
@@ -23,9 +23,9 @@
                 <ColumnDefinition Width="6" />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <controls:DragDropTreeView x:Name="TreeView" ItemsSource="{Binding RootNodes}" SelectedItems="{Binding SelectedNodes}" PrimaryItem="{Binding PrimaryNode, Mode=TwoWay}">
-                <controls:DragDropTreeView.ItemContainerStyle>
-                    <Style TargetType="{x:Type controls:DragDropTreeViewItem}" BasedOn="{StaticResource {x:Type controls:DragDropTreeViewItem}}">
+            <bm:DragDropTreeView x:Name="TreeView" ItemsSource="{Binding RootNodes}" SelectedItems="{Binding SelectedNodes}" PrimaryItem="{Binding PrimaryNode, Mode=TwoWay}">
+                <bm:DragDropTreeView.ItemContainerStyle>
+                    <Style TargetType="{x:Type bm:DragDropTreeViewItem}" BasedOn="{StaticResource {x:Type bm:DragDropTreeViewItem}}">
                         <Setter Property="IsPrimary" Value="{Binding IsPrimary}" />
                         <Setter Property="IsSelected" Value="{Binding IsSelected}" />
                         <Setter Property="IsExpanded" Value="{Binding IsExpanded}" />
@@ -53,8 +53,8 @@
                             </Trigger>
                         </Style.Triggers>
                     </Style>
-                </controls:DragDropTreeView.ItemContainerStyle>
-                <controls:DragDropTreeView.Resources>
+                </bm:DragDropTreeView.ItemContainerStyle>
+                <bm:DragDropTreeView.Resources>
                     <HierarchicalDataTemplate DataType="{x:Type vm:NodeViewModel}" ItemsSource="{Binding Children}">
                         <StackPanel Orientation="Horizontal">
                             <CheckBox IsChecked="{Binding IsSelected}" Focusable="False" />
@@ -62,8 +62,8 @@
                             <TextBlock Text="{Binding Name}" />
                         </StackPanel>
                     </HierarchicalDataTemplate>
-                </controls:DragDropTreeView.Resources>
-            </controls:DragDropTreeView>
+                </bm:DragDropTreeView.Resources>
+            </bm:DragDropTreeView>
             <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" />
             <DockPanel Grid.Column="2">
                 <TextBlock DockPanel.Dock="Top" Text="Primary Selected Item" FontWeight="Bold" />

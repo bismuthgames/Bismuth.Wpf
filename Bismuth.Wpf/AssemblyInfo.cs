@@ -1,4 +1,10 @@
 using System.Windows;
+using System.Windows.Markup;
+
+[assembly: XmlnsPrefix("http://schemas.bismuth.dk/winfx/xaml", "bm")]
+[assembly: XmlnsDefinition("http://schemas.bismuth.dk/winfx/xaml", "Bismuth.Wpf")]
+[assembly: XmlnsDefinition("http://schemas.bismuth.dk/winfx/xaml", "Bismuth.Wpf.Controls")]
+[assembly: XmlnsDefinition("http://schemas.bismuth.dk/winfx/xaml", "Bismuth.Wpf.Converters")]
 
 [assembly: ThemeInfo(
     ResourceDictionaryLocation.None, //where theme specific resource dictionaries are located
