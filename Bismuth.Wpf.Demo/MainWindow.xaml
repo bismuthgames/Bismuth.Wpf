@@ -32,7 +32,7 @@
             <TabItem Header="Controls">
                 <v:ControlsDemoView />
             </TabItem>
-            <TabItem Header="MultiSelectTreeView" IsSelected="True">
+            <TabItem Header="MultiSelectTreeView">
                 <v:MultiSelectTreeViewDemoView DataContext="{Binding MultiSelectTreeViewDemo}" />
             </TabItem>
             <TabItem Header="DragDrop">
@@ -43,6 +43,9 @@
             </TabItem>
             <TabItem Header="PropertyInspector">
                 <v:PropertyInspectorDemoView DataContext="{Binding PropertyInspectorDemo}" />
+            </TabItem>
+            <TabItem Header="GraphControl" IsSelected="True">
+                <v:GraphControlDemoView DataContext="{Binding GraphControlDemo}" />
             </TabItem>
         </TabControl>
     </Border>
