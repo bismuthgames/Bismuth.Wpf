@@ -10,10 +10,10 @@ namespace Bismuth.Wpf.Demo.ViewModels
         {
             Nodes = new[]
             {
-                new Node(0, "Idle"),
-                new Node(1, "Jump"),
-                new Node(2, "Fall"),
-                new Node(3, "Run")
+                new Node(0, "Idle", 300, 50),
+                new Node(1, "Jump", 500, 100),
+                new Node(2, "Fall", 100, 300),
+                new Node(3, "Run", 300, 200)
             };
 
             Connections = new[]
@@ -32,14 +32,18 @@ namespace Bismuth.Wpf.Demo.ViewModels
 
     public class Node
     {
-        public Node(int id, string name)
+        public Node(int id, string name, double x, double y)
         {
             Id = id;
             Name = name;
+            X = x;
+            Y = y;
         }
 
         public int Id { get; }
         public string Name { get; }
+        public double X { get; }
+        public double Y { get; }
     }
 
     public class Connection
