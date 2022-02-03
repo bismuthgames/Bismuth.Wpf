@@ -14,11 +14,11 @@ using System.Windows.Shapes;
 namespace Bismuth.Wpf.Demo.Views
 {
     /// <summary>
-    /// Interaction logic for GraphControlDemoView.xaml
+    /// Interaction logic for GraphViewDemoView.xaml
     /// </summary>
-    public partial class GraphControlDemoView : UserControl
+    public partial class GraphViewDemoView : UserControl
     {
-        public GraphControlDemoView()
+        public GraphViewDemoView()
         {
             InitializeComponent();
         }

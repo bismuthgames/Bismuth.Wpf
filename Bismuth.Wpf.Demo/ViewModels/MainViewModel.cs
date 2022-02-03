@@ -8,6 +8,6 @@ namespace Bismuth.Wpf.Demo.ViewModels
         public DragDropDemoViewModel DragDropDemo { get; } = new DragDropDemoViewModel();
         public DragDropTreeViewDemoViewModel DragDropTreeViewDemo { get; } = new DragDropTreeViewDemoViewModel();
         public PropertyInspectorDemoViewModel PropertyInspectorDemo { get; } = new PropertyInspectorDemoViewModel();
-        public GraphControlDemoViewModel GraphControlDemo { get; } = new GraphControlDemoViewModel();
+        public GraphViewDemoViewModel GraphViewDemo { get; } = new GraphViewDemoViewModel();
     }
 }

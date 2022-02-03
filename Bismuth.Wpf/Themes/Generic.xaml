@@ -5,7 +5,7 @@
         <ResourceDictionary Source="/Bismuth.Wpf;component/Themes/Styles/ComboBox.xaml" />
         <ResourceDictionary Source="/Bismuth.Wpf;component/Themes/Styles/DragDropScope.xaml" />
         <ResourceDictionary Source="/Bismuth.Wpf;component/Themes/Styles/DragDropTreeView.xaml" />
-        <ResourceDictionary Source="/Bismuth.Wpf;component/Themes/Styles/GraphControl.xaml" />
+        <ResourceDictionary Source="/Bismuth.Wpf;component/Themes/Styles/GraphView.xaml" />
         <ResourceDictionary Source="/Bismuth.Wpf;component/Themes/Styles/PropertyInspector.xaml" />
         <ResourceDictionary Source="/Bismuth.Wpf;component/Themes/Styles/TabControl.xaml" />
         <ResourceDictionary Source="/Bismuth.Wpf;component/Themes/Styles/TextBox.xaml" />

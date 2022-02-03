@@ -2,15 +2,20 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:controls="clr-namespace:Bismuth.Wpf.Controls">
 
-    <Style TargetType="{x:Type controls:GraphControl}">
+    <Style TargetType="{x:Type controls:GraphView}">
         <Setter Property="ClipToBounds" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type controls:GraphControl}">
+                <ControlTemplate TargetType="{x:Type controls:GraphView}">
                     <Border Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}">
-                        <controls:GraphPanel IsItemsHost="True" />
+                        <Grid Name="XYZ">
+                            <controls:GraphPanel IsItemsHost="True" />
+                            <!--<ItemsControl Name="PART_ConnectionsHost">
+                                
+                            </ItemsControl>-->
+                        </Grid>
                     </Border>
                 </ControlTemplate>
             </Setter.Value>

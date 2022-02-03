@@ -4,9 +4,9 @@ using System.Text;
 
 namespace Bismuth.Wpf.Demo.ViewModels
 {
-    public class GraphControlDemoViewModel
+    public class GraphViewDemoViewModel
     {
-        public GraphControlDemoViewModel()
+        public GraphViewDemoViewModel()
         {
             Nodes = new[]
             {
@@ -18,11 +18,11 @@ namespace Bismuth.Wpf.Demo.ViewModels
 
             Connections = new[]
             {
-                new Connection(Nodes[0], Nodes[1]),
-                new Connection(Nodes[1], Nodes[2]),
-                new Connection(Nodes[2], Nodes[0]),
-                new Connection(Nodes[0], Nodes[3]),
-                new Connection(Nodes[3], Nodes[0]),
+                new Connection("Up", Nodes[0], Nodes[1]),
+                new Connection("Down", Nodes[1], Nodes[2]),
+                new Connection("Space", Nodes[2], Nodes[0]),
+                new Connection("X", Nodes[0], Nodes[3]),
+                new Connection("Y", Nodes[3], Nodes[0]),
             };
         }
 
@@ -48,12 +48,14 @@ namespace Bismuth.Wpf.Demo.ViewModels
 
     public class Connection
     {
-        public Connection(Node a, Node b)
+        public Connection(string name, Node a, Node b)
         {
+            Name = name;
             A = a;
             B = b;
         }
 
+        public string Name { get; }
         public Node A { get; }
         public Node B { get; }
     }

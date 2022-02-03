@@ -44,8 +44,8 @@
             <TabItem Header="PropertyInspector">
                 <v:PropertyInspectorDemoView DataContext="{Binding PropertyInspectorDemo}" />
             </TabItem>
-            <TabItem Header="GraphControl" IsSelected="True">
-                <v:GraphControlDemoView DataContext="{Binding GraphControlDemo}" />
+            <TabItem Header="GraphView" IsSelected="True">
+                <v:GraphViewDemoView DataContext="{Binding GraphViewDemo}" />
             </TabItem>
         </TabControl>
     </Border>
