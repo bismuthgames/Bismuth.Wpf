@@ -11,9 +11,27 @@
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}">
                         <Grid Name="XYZ">
-                            <controls:GraphPanel IsItemsHost="True" />
+                            <ItemsControl Name="Merge">
+                                <ItemsControl.Template>
+                                    <ControlTemplate>
+                                        <controls:GraphPanel IsItemsHost="True" />
+                                    </ControlTemplate>
+                                </ItemsControl.Template>
+                            </ItemsControl>
+                            
+                            
+                            <!--<controls:GraphPanel x:Name="GP" IsItemsHost="True" />-->
                             <!--<ItemsControl Name="PART_ConnectionsHost">
+                            
                                 
+                            </ItemsControl>-->
+
+                            <!--<ItemsControl>
+                                <ItemsControl.Template>
+                                    <ControlTemplate>
+                                        <controls:GraphPanel IsItemsHost="True" />
+                                    </ControlTemplate>
+                                </ItemsControl.Template>
                             </ItemsControl>-->
                         </Grid>
                     </Border>
@@ -49,5 +67,34 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <!--<Style TargetType="{x:Type controls:GraphView.}">
+        <Setter Property="ClipToBounds" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:GraphView}">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}">
+                        <Grid Name="XYZ">
+                            <controls:GraphPanel IsItemsHost="True" />
+                            --><!--<ItemsControl Name="PART_ConnectionsHost">
+                            
+                                
+                            </ItemsControl>-->
+
+                            <!--<ItemsControl>
+                                <ItemsControl.Template>
+                                    <ControlTemplate>
+                                        <controls:GraphPanel IsItemsHost="True" />
+                                    </ControlTemplate>
+                                </ItemsControl.Template>
+                            </ItemsControl>--><!--
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>-->
 
 </ResourceDictionary>
