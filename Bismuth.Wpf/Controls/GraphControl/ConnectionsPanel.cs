@@ -51,9 +51,11 @@ namespace Bismuth.Wpf.Controls
 
                 //dc.DrawLine(pen, (Point)conn.A, (Point)conn.B);
 
+                var d = (conn.B.X - conn.A.X) * 0.5;
+
                 var bs = new BezierSegment(
-                    (Point)conn.A + new Vector(100, 0),
-                    (Point)conn.B - new Vector(100, 0),
+                    (Point)conn.A + new Vector(d, 0),
+                    (Point)conn.B - new Vector(d, 0),
                     (Point)conn.B,
                     true);
 
