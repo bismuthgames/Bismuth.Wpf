@@ -9,7 +9,7 @@
              d:DataContext="{d:DesignInstance vm:GraphViewDemoViewModel}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <bm:GraphView ItemsSource="{Binding Nodes}" Background="White" ConnectionsSource="{Binding Connections}">
+    <!--<bm:GraphView ItemsSource="{Binding Nodes}" Background="White" ConnectionsSource="{Binding Connections}">
         <bm:GraphView.ItemContainerStyle>
             <Style TargetType="{x:Type bm:GraphNode}"
                    BasedOn="{StaticResource {x:Type bm:GraphNode}}">
@@ -31,18 +31,18 @@
                 </Border>
             </DataTemplate>
         </bm:GraphView.ConnectionTemplate>
-    </bm:GraphView>
+    </bm:GraphView>-->
 
 
-    <!--<bm:GraphView Background="White">
+    <bm:GraphView Background="White">
         <bm:GraphView.Connections>
             <bm:GraphConnection>
-                <Border Background="Blue" Padding="20">
+                <Border Background="Blue" Padding="4">
                     <TextBlock Text="Conn 1" />
                 </Border>
             </bm:GraphConnection>
             <bm:GraphConnection>
-                <Border Background="Pink" Padding="20">
+                <Border Background="Pink" Padding="4">
                     <TextBlock Text="Conn 2" />
                 </Border>
             </bm:GraphConnection>
@@ -62,6 +62,6 @@
                 <TextBlock Text="Fisk 2" />
             </Border>
         </bm:GraphNode>
-    </bm:GraphView>-->
+    </bm:GraphView>
 
 </UserControl>

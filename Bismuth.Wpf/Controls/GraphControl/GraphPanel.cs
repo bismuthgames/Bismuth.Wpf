@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Diagnostics;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
@@ -6,22 +7,7 @@ namespace Bismuth.Wpf.Controls
 {
     public class GraphPanel : Panel
     {
-        //public static Point GetPosition(DependencyObject obj)
-        //{
-        //    return (Point)obj.GetValue(PositionProperty);
-        //}
-
-        //public static void SetPosition(DependencyObject obj, Point value)
-        //{
-        //    obj.SetValue(PositionProperty, value);
-        //}
-
-        //public static readonly DependencyProperty PositionProperty =
-        //    DependencyProperty.RegisterAttached("Position", typeof(Point), typeof(GraphPanel),
-        //        new FrameworkPropertyMetadata(new Point(),
-        //            //FrameworkPropertyMetadataOptions.AffectsMeasure |
-        //            FrameworkPropertyMetadataOptions.AffectsArrange |
-        //            FrameworkPropertyMetadataOptions.AffectsRender));
+        public Panel PPP;
 
         public static double GetX(DependencyObject obj)
         {
@@ -36,9 +22,10 @@ namespace Bismuth.Wpf.Controls
         public static readonly DependencyProperty XProperty =
             DependencyProperty.RegisterAttached("X", typeof(double), typeof(GraphPanel),
                 new FrameworkPropertyMetadata(0.0,
-                    //FrameworkPropertyMetadataOptions.AffectsMeasure |
-                    FrameworkPropertyMetadataOptions.AffectsArrange |
-                    FrameworkPropertyMetadataOptions.AffectsRender));
+                    FrameworkPropertyMetadataOptions.AffectsParentMeasure |
+                    FrameworkPropertyMetadataOptions.AffectsParentArrange |
+                    FrameworkPropertyMetadataOptions.AffectsRender,
+                    OnXYChanged));
 
         public static double GetY(DependencyObject obj)
         {
@@ -50,13 +37,13 @@ namespace Bismuth.Wpf.Controls
             obj.SetValue(YProperty, value);
         }
 
-        // Using a DependencyProperty as the backing store for Y.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty YProperty =
             DependencyProperty.RegisterAttached("Y", typeof(double), typeof(GraphPanel),
-                                new FrameworkPropertyMetadata(0.0,
-                    //FrameworkPropertyMetadataOptions.AffectsMeasure |
-                    FrameworkPropertyMetadataOptions.AffectsArrange |
-                    FrameworkPropertyMetadataOptions.AffectsRender));
+                new FrameworkPropertyMetadata(0.0,
+                    FrameworkPropertyMetadataOptions.AffectsParentMeasure |
+                    FrameworkPropertyMetadataOptions.AffectsParentArrange |
+                    FrameworkPropertyMetadataOptions.AffectsRender,
+                    OnXYChanged));
 
         public static Point GetOrigin(DependencyObject obj)
         {
@@ -74,6 +61,16 @@ namespace Bismuth.Wpf.Controls
                     //FrameworkPropertyMetadataOptions.AffectsMeasure |
                     FrameworkPropertyMetadataOptions.AffectsArrange |
                     FrameworkPropertyMetadataOptions.AffectsRender));
+
+        private static void OnXYChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (!(d is Visual visual)) return;
+
+            if (VisualTreeHelper.GetParent(d) is GraphPanel panel)
+                panel.PPP?.InvalidateVisual();
+            else
+                Debug.WriteLine($"ERROR: TimelinePanel for '{visual.GetType()}' not found.");
+        }
 
         protected override Size MeasureOverride(Size availableSize)
         {

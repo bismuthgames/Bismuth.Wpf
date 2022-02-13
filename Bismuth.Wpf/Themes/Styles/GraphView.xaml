@@ -11,15 +11,20 @@
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}">
                         <Grid Name="XYZ">
-                            <ItemsControl Name="Merge">
-                                <ItemsControl.Template>
+                            <controls:GraphPanel x:Name="GraphPanel" IsItemsHost="True" />
+                            <!--<ItemsControl Name="Merge">
+                                -->
+                            <!--<ItemsControl.Template>
                                     <ControlTemplate>
-                                        <controls:GraphPanel IsItemsHost="True" />
+                                        -->
+                            <!--<controls:GraphPanel IsItemsHost="True" />-->
+                            <!--
                                     </ControlTemplate>
-                                </ItemsControl.Template>
-                            </ItemsControl>
-                            
-                            
+                                </ItemsControl.Template>-->
+                            <!--
+                            </ItemsControl>-->
+
+
                             <!--<controls:GraphPanel x:Name="GP" IsItemsHost="True" />-->
                             <!--<ItemsControl Name="PART_ConnectionsHost">
                             
@@ -44,11 +49,14 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type controls:GraphNode}">
-                    <Border Background="{TemplateBinding Background}"
+                    <Grid>
+                        <Border Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}">
-                        <ContentPresenter />
-                    </Border>
+                            <ContentPresenter />
+                        </Border>
+                        <Thumb Name="Grip" />
+                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -68,6 +76,16 @@
         </Setter>
     </Style>
 
+    <!--<Style TargetType="{x:Type controls:GraphConnectionHost}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:GraphConnectionHost}">
+                    <StackPanel Name="PPP" IsItemsHost="True" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>-->
+
     <!--<Style TargetType="{x:Type controls:GraphView.}">
         <Setter Property="ClipToBounds" Value="True" />
         <Setter Property="Template">
@@ -78,18 +96,20 @@
                             BorderThickness="{TemplateBinding BorderThickness}">
                         <Grid Name="XYZ">
                             <controls:GraphPanel IsItemsHost="True" />
-                            --><!--<ItemsControl Name="PART_ConnectionsHost">
+                            -->
+    <!--<ItemsControl Name="PART_ConnectionsHost">
                             
                                 
                             </ItemsControl>-->
 
-                            <!--<ItemsControl>
+    <!--<ItemsControl>
                                 <ItemsControl.Template>
                                     <ControlTemplate>
                                         <controls:GraphPanel IsItemsHost="True" />
                                     </ControlTemplate>
                                 </ItemsControl.Template>
-                            </ItemsControl>--><!--
+                            </ItemsControl>-->
+    <!--
                         </Grid>
                     </Border>
                 </ControlTemplate>
