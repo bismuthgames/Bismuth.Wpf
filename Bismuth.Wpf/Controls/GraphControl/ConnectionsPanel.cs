@@ -70,21 +70,56 @@ namespace Bismuth.Wpf.Controls
 
         private Connection GetConnection(UIElement element, int i)
         {
-            var a = Panel.Children[0 + i];
-            var b = Panel.Children[1 + i];
+            var a = Node.Create(Panel.Children[0 + i]);
+            var b = Node.Create(Panel.Children[1 + i]);
+
+            var x1 = new Connection(a.L, b.R, new Vector(b.R.X - a.L.X, 0));
+            var x2 = new Connection(a.R, b.L, new Vector(b.R.X - a.L.X, 0));
+
 
             return new Connection
             {
-                A = new Vector(GraphPanel.GetX(a), GraphPanel.GetY(a)),
-                B = new Vector(GraphPanel.GetX(b), GraphPanel.GetY(b))
+                A = Node.Create(a),
+                B = Node.Create(b)
             };
         }
 
         private struct Connection
         {
+            public Connection(Vector a, Vector b, Vector dist)
+            {
+                A = a;
+                B = b;
+                Dist = dist;
+            }
+
             public Vector A;
             public Vector B;
             public Vector Center => (A + B) * 0.5;
+            public Vector Dist;
+        }
+
+        private struct Node
+        {
+            public static Node Create(UIElement element)
+            {
+                var rect = GraphPanel.GetRect(element);
+                return new Node
+                {
+                    Element = element,
+                    Rect = rect,
+                    Center = ((Vector)rect.TopLeft + (Vector)rect.BottomRight) * 0.5
+                };
+            }
+
+            public UIElement Element;
+            public Rect Rect;
+            public Vector Center;
+
+            public Vector L => new Vector(Rect.Left, Center.Y);
+            public Vector T => new Vector(Center.X, Rect.Top);
+            public Vector R => new Vector(Rect.Right, Center.Y);
+            public Vector B => new Vector(Center.X, Rect.Bottom);
         }
     }
 }

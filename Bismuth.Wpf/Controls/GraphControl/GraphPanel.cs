@@ -88,14 +88,7 @@ namespace Bismuth.Wpf.Controls
             {
                 if (child is null) continue;
 
-                //var p = GetPosition(child);
-                var p = new Point(GetX(child), GetY(child));
-                var o = GetOrigin(child);
-
-                p.X -= child.DesiredSize.Width * o.X;
-                p.Y -= child.DesiredSize.Height * o.Y;
-
-                child.Arrange(new Rect(p, child.DesiredSize));
+                child.Arrange(GetRect(child));
             }
             return finalSize;
         }
@@ -103,6 +96,17 @@ namespace Bismuth.Wpf.Controls
         protected override void OnRender(DrawingContext dc)
         {
             base.OnRender(dc);
+        }
+
+        internal static Rect GetRect(UIElement element)
+        {
+            var p = new Point(GetX(element), GetY(element));
+            var o = GetOrigin(element);
+
+            p.X -= element.DesiredSize.Width * o.X;
+            p.Y -= element.DesiredSize.Height * o.Y;
+
+            return new Rect(p, element.DesiredSize);
         }
     }
 }
